@@ -243,7 +243,7 @@ The persisted output strictly matches the SRS 2.0 data schema:
   ]
 }
 ```
-
+ 
 ---
 
 ## 8. Error Handling & Recovery Matrix
