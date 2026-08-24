@@ -78,7 +78,7 @@ class WhatsAppItem(BaseModel):
     countrty: str = ""
 
 
-class AdModDataRecord(BaseModel):
+class AdMobDataRecord(BaseModel):
     ad_id: str
     status: int
     platform: str = "12"

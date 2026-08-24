@@ -19,7 +19,7 @@ from services import url_parser
 from pydantic import ValidationError
 from services.browser_manager import BrowserManager
 from services.html_packager import create_html_zip
-from core.models import AdRecord, WhatsAppData, GeoData, AdModDataRecord
+from core.models import AdRecord, WhatsAppData, GeoData, AdMobDataRecord
 from services.proxy_manager import ProxyManager, normalize_country_code
 from engine.scraper import execute_country_observation
 from core.storage import Storage
@@ -143,7 +143,7 @@ class ScrapingManager:
                 whatsapp_info = {}
 
         now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        admod_data_record = {
+        admob_data_record = {
             "ad_id": str(ad_id),
             "status": 2,
             "platform": "12",
@@ -169,9 +169,9 @@ class ScrapingManager:
             "updated": now_iso,
         }
 
-        self.storage.upsert_record(admod_data_record)
-        logger.info("Successfully persisted 1 advertisement payload to AdMod_Data.json for %s (ad_id=%s, geolocations=%d)", target_url, ad_id, len(geolocations))
-        return admod_data_record
+        self.storage.upsert_record(admob_data_record)
+        logger.info("Successfully persisted 1 advertisement payload to AdMob_Data.json for %s (ad_id=%s, geolocations=%d)", target_url, ad_id, len(geolocations))
+        return admob_data_record
 
     # ------------------------------------------------------------------
     # API-driven pipeline: GET ads → SCRAPE → UPLOAD → INSERT
@@ -197,7 +197,7 @@ class ScrapingManager:
 
         now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # Update record in AdMod_Data.json when scraping starts (status = 1 if fresh, preserve 2 if repeat)
+        # Update record in AdMob_Data.json when scraping starts (status = 1 if fresh, preserve 2 if repeat)
         existing_rec = self.storage.get_record(ad_id)
         current_status = 1
         created_timestamp = now_iso
@@ -227,9 +227,9 @@ class ScrapingManager:
         }
         try:
             self.storage.upsert_record(initial_record)
-            logger.info("Updated AdMod_Data.json record for ad_id=%s (status=%d)", ad_id, current_status)
+            logger.info("Updated AdMob_Data.json record for ad_id=%s (status=%d)", ad_id, current_status)
         except Exception as exc:
-            logger.warning("Could not update AdMod_Data.json record for ad_id=%s: %s", ad_id, exc)
+            logger.warning("Could not update AdMob_Data.json record for ad_id=%s: %s", ad_id, exc)
 
         # Determine which countries to scrape
         scrape_countries = [normalize_country_code(c) for c in countries] if countries else [config.PROXY_COUNTRIES[0]]
@@ -380,7 +380,7 @@ class ScrapingManager:
             except Exception:
                 whatsapp_info = {}
 
-            # Build whatsapp array for new AdMod_Data.json schema
+            # Build whatsapp array for new AdMob_Data.json schema
             for wa in all_whatsapp_data:
                 msg = wa.get("whatsapp-message")
                 if msg and msg not in whatsapp_texts:
@@ -502,9 +502,9 @@ class ScrapingManager:
             "lead_campaign_tag": "",
         }
 
-        # --- Build NEW AdMod_Data.json record format ---
+        # --- Build NEW AdMob_Data.json record format ---
         updated_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        admod_data_record: Dict[str, Any] = {
+        admob_data_record: Dict[str, Any] = {
             "ad_id": str(ad_id),
             "status": 2,  # 2 = repeat / completed
             "platform": str(ad_data.get("platform", "12")),
@@ -524,9 +524,9 @@ class ScrapingManager:
             "updated": updated_iso,
         }
 
-        # --- Pydantic Validation & Local Persistence in data/AdMod_Data.json ---
+        # --- Pydantic Validation & Local Persistence in data/AdMob_Data.json ---
         try:
-            validated_model = AdModDataRecord.model_validate(admod_data_record)
+            validated_model = AdMobDataRecord.model_validate(admob_data_record)
             logger.info("Pydantic validation PASSED for ad_id=%s", ad_id)
             validated_payload = validated_model.model_dump()
 
@@ -539,12 +539,12 @@ class ScrapingManager:
                 logger.warning("Could not write to validated_payload.json: %s", exc)
 
             self.storage.upsert_record(validated_payload)
-            logger.info("Persisted validated AdMod_Data.json record locally for ad_id=%s", ad_id)
+            logger.info("Persisted validated AdMob_Data.json record locally for ad_id=%s", ad_id)
         except ValidationError as err:
             logger.error("Pydantic validation FAILED for ad_id=%s: %s", ad_id, err)
             for error in err.errors():
                 logger.error("  Field: %s | Error: %s | Msg: %s", '.'.join(map(str, error['loc'])), error['type'], error['msg'])
-            self.storage.upsert_record(admod_data_record)
+            self.storage.upsert_record(admob_data_record)
 
         # --- Validate required fields before sending to API ---
         missing_fields = []

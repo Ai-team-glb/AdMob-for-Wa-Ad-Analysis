@@ -87,7 +87,7 @@ def save_api_response_to_ads_json(response_obj: dict) -> None:
 
 
 def register_received_ad(ad: Dict[str, Any], storage: Storage) -> None:
-    """Register ad in AdMod_Data.json: status=0 if new, status=2 if repeat."""
+    """Register ad in AdMob_Data.json: status=0 if new, status=2 if repeat."""
     ad_id = str(ad.get("ad_id") or ad.get("id") or "").strip()
     if not ad_id:
         return
@@ -142,7 +142,7 @@ def load_ads_from_cache(storage: Storage) -> List[Dict[str, Any]]:
         if not isinstance(ads_list, list):
             return []
 
-        # Register all ads in AdMod_Data.json upon loading
+        # Register all ads in AdMob_Data.json upon loading
         for ad in ads_list:
             if isinstance(ad, dict):
                 register_received_ad(ad, storage)
@@ -172,7 +172,7 @@ def load_ads_from_cache(storage: Storage) -> List[Dict[str, Any]]:
 
 async def fetch_and_store_api_ads(storage: Storage) -> List[Dict[str, Any]]:
     """Hit GET API, save full response to data/ads.json, and return unscraped ads."""
-    import admob_api
+    from api import admob_api
 
     endpoint = config.DEV_GET_API or config.ADMOB_GET_ADS_ENDPOINT
     url = admob_api._url(endpoint)
@@ -200,7 +200,7 @@ async def fetch_and_store_api_ads(storage: Storage) -> List[Dict[str, Any]]:
 
                 ads = payload.get("data", []) if isinstance(payload.get("data"), list) else []
                 
-                # Register all ads in AdMod_Data.json upon receipt
+                # Register all ads in AdMob_Data.json upon receipt
                 for ad in ads:
                     if isinstance(ad, dict):
                         register_received_ad(ad, storage)

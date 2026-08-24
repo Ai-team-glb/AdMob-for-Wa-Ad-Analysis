@@ -15,7 +15,7 @@ admobcontents/
 │   ├── __init__.py
 │   ├── logger.py               # Centralized logging setup
 │   ├── models.py               # Pydantic data models & payload contracts
-│   ├── storage.py              # Local JSON storage manager (data/AdMod_Data.json)
+│   ├── storage.py              # Local JSON storage manager (data/AdMob_Data.json)
 │   ├── error_handler.py        # Exception categorization and classifications
 │   └── retry.py                # Generic async retry handler with linear backoff
 │
@@ -41,7 +41,7 @@ admobcontents/
 └── data/                       # Local runtime data cache & screenshots
     ├── ads.json                # API response cache
     ├── processed_ads.json      # Processed ad_id tracker
-    ├── AdMod_Data.json         # Storage persistence record file
+    ├── AdMob_Data.json         # Storage persistence record file
     ├── validated_payload.json  # Last validated payload record
     └── screenshots/            # Captured page screenshots directory
 ```

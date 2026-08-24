@@ -7572,3 +7572,446 @@ Call log:
 [2026-08-24 13:50:48] [WARNING] Failed to clean up temp file C:\Tanmoy Patra\main admob\data\screenshots\be8edecbee686bd3aacf5711_lander.zip: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Tanmoy Patra\\main admob\\data\\screenshots\\be8edecbee686bd3aacf5711_lander.zip'
 [2026-08-24 13:50:48] [INFO] API Ads pipeline finished: 0 succeeded, 2 failed out of 2 ad(s)
 [2026-08-24 13:50:48] [INFO] [NO DATA / CYCLE END] Waiting 30.0 seconds before next GET API / cycle attempt...
+[2026-08-24 15:04:33] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:04:33] [INFO] Loaded Configuration:
+[2026-08-24 15:04:33] [INFO]   HIT_GET_API: False
+[2026-08-24 15:04:33] [INFO]   HEADLESS: True
+[2026-08-24 15:04:33] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:04:33] [INFO]   INSTANCES: 10
+[2026-08-24 15:04:33] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:04:33] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:04:33] [INFO] ============================================================
+[2026-08-24 15:04:33] [INFO] Starting Execution Cycle #1 (HIT_GET_API=False)
+[2026-08-24 15:04:33] [INFO] ============================================================
+[2026-08-24 15:04:33] [INFO] [HIT_GET_API=false] Checking local cache file C:\Tanmoy Patra\main admob\data\ads.json...
+[2026-08-24 15:04:33] [INFO] Found 8 uncompleted ad(s) in local C:\Tanmoy Patra\main admob\data\ads.json cache.
+[2026-08-24 15:04:33] [INFO] Processing 8 ad(s) in cycle #1...
+[2026-08-24 15:04:33] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:04:33] [INFO] --- Ad 1/2: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:04:33] [INFO] ============================================================
+[2026-08-24 15:04:33] [INFO] API Pipeline: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:04:33] [INFO] ============================================================
+[2026-08-24 15:04:33] [INFO] Updated AdMod_Data.json record for ad_id=bd600e6282b620adefdfff02 (status=2)
+[2026-08-24 15:04:33] [INFO] Scraping ad_id=bd600e6282b620adefdfff02 via proxy country=IN
+[2026-08-24 15:04:33] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:04:41] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:04:41] [INFO] WhatsApp links found: 0
+[2026-08-24 15:04:43] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:04:43] [INFO] Screenshot saved: bd600e6282b620adefdfff02.png
+[2026-08-24 15:04:43] [INFO] Phone numbers found: 1
+[2026-08-24 15:04:43] [INFO] Contact buttons found: 1
+[2026-08-24 15:04:43] [INFO] Scrape completed for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:04:43] [INFO] Scraping completed for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:04:43] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02.png
+[2026-08-24 15:04:43] [INFO] HTML ZIP created: bd600e6282b620adefdfff02_lander.zip (3.7 KB)
+[2026-08-24 15:04:43] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip
+[2026-08-24 15:04:43] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:04:43] [WARNING] upload_media failed (attempt 1/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 2.0s
+[2026-08-24 15:04:45] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:04:45] [WARNING] upload_media failed (attempt 2/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 4.0s
+[2026-08-24 15:04:49] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:04:49] [WARNING] upload_media failed (attempt 3/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 6.0s
+[2026-08-24 15:04:55] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:04:55] [ERROR] Upload failed for ad_id=bd600e6282b620adefdfff02: /api/v1/admob/landers/upload_admob_blackhat
+[2026-08-24 15:04:55] [INFO] Pydantic validation PASSED for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:04:55] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:04:55] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:04:55] [ERROR] Insert payload missing required fields for ad_id=bd600e6282b620adefdfff02: ['screen_shot']
+[2026-08-24 15:04:55] [INFO] Switching to status=3 (redirect-only) for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:04:55] [INFO] Insert lander started for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:04:55] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 1/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:04:58] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 2/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:05:02] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 3/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:05:02] [ERROR] Insert failed for ad_id=bd600e6282b620adefdfff02: [API_CONNECTION_ERROR] Insert failed after 3 attempts
+[2026-08-24 15:05:02] [WARNING] Failed to clean up temp file C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Tanmoy Patra\\main admob\\data\\screenshots\\bd600e6282b620adefdfff02_lander.zip'
+[2026-08-24 15:05:02] [INFO] Waiting 30.0s gap before next ad instance...
+[2026-08-24 15:05:32] [INFO] --- Ad 2/2: ad_id=be8edecbee686bd3aacf5711 destination=https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152385763 ---
+[2026-08-24 15:05:32] [INFO] ============================================================
+[2026-08-24 15:05:32] [INFO] API Pipeline: ad_id=be8edecbee686bd3aacf5711 destination=https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152385763 countries=['India']
+[2026-08-24 15:05:32] [INFO] ============================================================
+[2026-08-24 15:05:32] [INFO] Updated AdMod_Data.json record for ad_id=be8edecbee686bd3aacf5711 (status=2)
+[2026-08-24 15:05:32] [INFO] Scraping ad_id=be8edecbee686bd3aacf5711 via proxy country=IN
+[2026-08-24 15:05:32] [INFO] Navigation started: https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152385763 (proxy country=IN)
+[2026-08-24 15:05:38] [INFO] Redirects detected: 1 | Destination: https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152385763
+[2026-08-24 15:05:40] [INFO] WhatsApp links found: 1
+[2026-08-24 15:05:41] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:05:41] [INFO] Screenshot saved: be8edecbee686bd3aacf5711.png
+[2026-08-24 15:05:41] [INFO] Phone numbers found: 0
+[2026-08-24 15:05:41] [INFO] Contact buttons found: 1
+[2026-08-24 15:05:41] [INFO] Scrape completed for ad_id=be8edecbee686bd3aacf5711 country=IN
+[2026-08-24 15:05:41] [INFO] Scraping completed for ad_id=be8edecbee686bd3aacf5711
+[2026-08-24 15:05:41] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\be8edecbee686bd3aacf5711.png
+[2026-08-24 15:05:41] [INFO] HTML ZIP created: be8edecbee686bd3aacf5711_lander.zip (7.4 KB)
+[2026-08-24 15:05:41] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\be8edecbee686bd3aacf5711_lander.zip
+[2026-08-24 15:05:41] [INFO] Upload started for ad_id=be8edecbee686bd3aacf5711 country=IN
+[2026-08-24 15:05:41] [WARNING] upload_media failed (attempt 1/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 2.0s
+[2026-08-24 15:05:43] [INFO] Upload started for ad_id=be8edecbee686bd3aacf5711 country=IN
+[2026-08-24 15:05:43] [WARNING] upload_media failed (attempt 2/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 4.0s
+[2026-08-24 15:05:47] [INFO] Upload started for ad_id=be8edecbee686bd3aacf5711 country=IN
+[2026-08-24 15:05:47] [WARNING] upload_media failed (attempt 3/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 6.0s
+[2026-08-24 15:05:53] [INFO] Upload started for ad_id=be8edecbee686bd3aacf5711 country=IN
+[2026-08-24 15:05:53] [ERROR] Upload failed for ad_id=be8edecbee686bd3aacf5711: /api/v1/admob/landers/upload_admob_blackhat
+[2026-08-24 15:05:53] [INFO] Pydantic validation PASSED for ad_id=be8edecbee686bd3aacf5711
+[2026-08-24 15:05:53] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:05:54] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=be8edecbee686bd3aacf5711
+[2026-08-24 15:05:54] [ERROR] Insert payload missing required fields for ad_id=be8edecbee686bd3aacf5711: ['screen_shot']
+[2026-08-24 15:05:54] [INFO] Switching to status=3 (redirect-only) for ad_id=be8edecbee686bd3aacf5711
+[2026-08-24 15:05:54] [INFO] Insert lander started for ad_id=be8edecbee686bd3aacf5711
+[2026-08-24 15:05:54] [WARNING] Insert transient error for ad_id=be8edecbee686bd3aacf5711 (attempt 1/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:05:56] [WARNING] Insert transient error for ad_id=be8edecbee686bd3aacf5711 (attempt 2/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:06:00] [WARNING] Insert transient error for ad_id=be8edecbee686bd3aacf5711 (attempt 3/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:06:00] [ERROR] Insert failed for ad_id=be8edecbee686bd3aacf5711: [API_CONNECTION_ERROR] Insert failed after 3 attempts
+[2026-08-24 15:06:00] [WARNING] Failed to clean up temp file C:\Tanmoy Patra\main admob\data\screenshots\be8edecbee686bd3aacf5711_lander.zip: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Tanmoy Patra\\main admob\\data\\screenshots\\be8edecbee686bd3aacf5711_lander.zip'
+[2026-08-24 15:06:00] [INFO] API Ads pipeline finished: 0 succeeded, 2 failed out of 2 ad(s)
+[2026-08-24 15:06:00] [INFO] [NO DATA / CYCLE END] Waiting 30.0 seconds before next GET API / cycle attempt...
+[2026-08-24 15:06:30] [INFO] ============================================================
+[2026-08-24 15:06:30] [INFO] Starting Execution Cycle #2 (HIT_GET_API=False)
+[2026-08-24 15:06:30] [INFO] ============================================================
+[2026-08-24 15:06:30] [INFO] [HIT_GET_API=false] Checking local cache file C:\Tanmoy Patra\main admob\data\ads.json...
+[2026-08-24 15:06:30] [INFO] Found 8 uncompleted ad(s) in local C:\Tanmoy Patra\main admob\data\ads.json cache.
+[2026-08-24 15:06:30] [INFO] Processing 8 ad(s) in cycle #2...
+[2026-08-24 15:06:30] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:06:30] [INFO] --- Ad 1/2: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:06:30] [INFO] ============================================================
+[2026-08-24 15:06:30] [INFO] API Pipeline: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:06:30] [INFO] ============================================================
+[2026-08-24 15:06:30] [INFO] Updated AdMod_Data.json record for ad_id=bd600e6282b620adefdfff02 (status=2)
+[2026-08-24 15:06:30] [INFO] Scraping ad_id=bd600e6282b620adefdfff02 via proxy country=IN
+[2026-08-24 15:06:30] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:06:37] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:06:37] [INFO] WhatsApp links found: 0
+[2026-08-24 15:06:40] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:06:40] [INFO] Screenshot saved: bd600e6282b620adefdfff02.png
+[2026-08-24 15:06:40] [INFO] Phone numbers found: 1
+[2026-08-24 15:06:40] [INFO] Contact buttons found: 1
+[2026-08-24 15:06:40] [INFO] Scrape completed for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:06:40] [INFO] Scraping completed for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:06:40] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02.png
+[2026-08-24 15:06:40] [INFO] HTML ZIP created: bd600e6282b620adefdfff02_lander.zip (3.7 KB)
+[2026-08-24 15:06:40] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip
+[2026-08-24 15:06:40] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:06:40] [WARNING] upload_media failed (attempt 1/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 2.0s
+[2026-08-24 15:06:42] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:06:42] [WARNING] upload_media failed (attempt 2/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 4.0s
+[2026-08-24 15:06:46] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:06:46] [WARNING] upload_media failed (attempt 3/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 6.0s
+[2026-08-24 15:12:37] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:12:37] [INFO] Loaded Configuration:
+[2026-08-24 15:12:37] [INFO]   HIT_GET_API: False
+[2026-08-24 15:12:37] [INFO]   HEADLESS: True
+[2026-08-24 15:12:37] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:12:37] [INFO]   INSTANCES: 10
+[2026-08-24 15:12:37] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:12:37] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:12:37] [INFO] ============================================================
+[2026-08-24 15:12:37] [INFO] Starting Execution Cycle #1 (HIT_GET_API=False)
+[2026-08-24 15:12:37] [INFO] ============================================================
+[2026-08-24 15:12:37] [INFO] [HIT_GET_API=false] Checking local cache file C:\Tanmoy Patra\main admob\data\ads.json...
+[2026-08-24 15:12:37] [INFO] Found 8 uncompleted ad(s) in local C:\Tanmoy Patra\main admob\data\ads.json cache.
+[2026-08-24 15:12:37] [INFO] Processing 8 ad(s) in cycle #1...
+[2026-08-24 15:12:37] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:12:37] [INFO] --- Ad 1/2: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:12:37] [INFO] ============================================================
+[2026-08-24 15:12:37] [INFO] API Pipeline: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:12:37] [INFO] ============================================================
+[2026-08-24 15:12:37] [INFO] Updated AdMod_Data.json record for ad_id=bd600e6282b620adefdfff02 (status=2)
+[2026-08-24 15:12:37] [INFO] Scraping ad_id=bd600e6282b620adefdfff02 via proxy country=IN
+[2026-08-24 15:12:37] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:12:46] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:12:46] [INFO] WhatsApp links found: 0
+[2026-08-24 15:12:48] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:12:48] [INFO] Screenshot saved: bd600e6282b620adefdfff02.png
+[2026-08-24 15:12:48] [INFO] Phone numbers found: 1
+[2026-08-24 15:12:48] [INFO] Contact buttons found: 1
+[2026-08-24 15:12:48] [INFO] Scrape completed for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:12:48] [INFO] Scraping completed for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:12:48] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02.png
+[2026-08-24 15:12:48] [INFO] HTML ZIP created: bd600e6282b620adefdfff02_lander.zip (3.7 KB)
+[2026-08-24 15:12:48] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip
+[2026-08-24 15:12:48] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:12:48] [WARNING] upload_media failed (attempt 1/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 2.0s
+[2026-08-24 15:12:50] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:12:50] [WARNING] upload_media failed (attempt 2/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 4.0s
+[2026-08-24 15:12:54] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:12:54] [WARNING] upload_media failed (attempt 3/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 6.0s
+[2026-08-24 15:13:00] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:13:00] [ERROR] Upload failed for ad_id=bd600e6282b620adefdfff02: /api/v1/admob/landers/upload_admob_blackhat
+[2026-08-24 15:13:00] [INFO] Pydantic validation PASSED for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:13:00] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:13:00] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:13:00] [ERROR] Insert payload missing required fields for ad_id=bd600e6282b620adefdfff02: ['screen_shot']
+[2026-08-24 15:13:00] [INFO] Switching to status=3 (redirect-only) for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:13:00] [INFO] Insert lander started for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:13:00] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 1/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:13:02] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 2/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:13:02] [WARNING] Failed to clean up temp file C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Tanmoy Patra\\main admob\\data\\screenshots\\bd600e6282b620adefdfff02_lander.zip'
+[2026-08-24 15:13:35] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:13:35] [INFO] Loaded Configuration:
+[2026-08-24 15:13:35] [INFO]   HIT_GET_API: True
+[2026-08-24 15:13:35] [INFO]   HEADLESS: True
+[2026-08-24 15:13:35] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:13:35] [INFO]   INSTANCES: 10
+[2026-08-24 15:13:35] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:13:35] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:13:35] [INFO] ============================================================
+[2026-08-24 15:13:35] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:13:35] [INFO] ============================================================
+[2026-08-24 15:13:35] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:13:37] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:13:37] [INFO] Loaded Configuration:
+[2026-08-24 15:13:37] [INFO]   HIT_GET_API: True
+[2026-08-24 15:13:37] [INFO]   HEADLESS: True
+[2026-08-24 15:13:37] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:13:37] [INFO]   INSTANCES: 10
+[2026-08-24 15:13:37] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:13:37] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:13:38] [INFO] ============================================================
+[2026-08-24 15:13:38] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:13:38] [INFO] ============================================================
+[2026-08-24 15:13:38] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:14:03] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:14:03] [INFO] Loaded Configuration:
+[2026-08-24 15:14:03] [INFO]   HIT_GET_API: True
+[2026-08-24 15:14:03] [INFO]   HEADLESS: True
+[2026-08-24 15:14:03] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:14:03] [INFO]   INSTANCES: 10
+[2026-08-24 15:14:03] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:14:03] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:14:03] [INFO] ============================================================
+[2026-08-24 15:14:03] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:14:03] [INFO] ============================================================
+[2026-08-24 15:14:03] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:14:32] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:14:32] [INFO] Loaded Configuration:
+[2026-08-24 15:14:32] [INFO]   HIT_GET_API: False
+[2026-08-24 15:14:32] [INFO]   HEADLESS: True
+[2026-08-24 15:14:32] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:14:32] [INFO]   INSTANCES: 10
+[2026-08-24 15:14:32] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:14:32] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:14:32] [INFO] ============================================================
+[2026-08-24 15:14:32] [INFO] Starting Execution Cycle #1 (HIT_GET_API=False)
+[2026-08-24 15:14:32] [INFO] ============================================================
+[2026-08-24 15:14:32] [INFO] [HIT_GET_API=false] Checking local cache file C:\Tanmoy Patra\main admob\data\ads.json...
+[2026-08-24 15:14:32] [INFO] Found 8 uncompleted ad(s) in local C:\Tanmoy Patra\main admob\data\ads.json cache.
+[2026-08-24 15:14:32] [INFO] Processing 8 ad(s) in cycle #1...
+[2026-08-24 15:14:32] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:14:32] [INFO] --- Ad 1/2: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:14:32] [INFO] ============================================================
+[2026-08-24 15:14:32] [INFO] API Pipeline: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:14:32] [INFO] ============================================================
+[2026-08-24 15:14:32] [INFO] Updated AdMod_Data.json record for ad_id=bd600e6282b620adefdfff02 (status=2)
+[2026-08-24 15:14:32] [INFO] Scraping ad_id=bd600e6282b620adefdfff02 via proxy country=IN
+[2026-08-24 15:14:32] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:14:40] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:14:40] [INFO] WhatsApp links found: 0
+[2026-08-24 15:14:43] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:14:43] [INFO] Screenshot saved: bd600e6282b620adefdfff02.png
+[2026-08-24 15:14:43] [INFO] Phone numbers found: 1
+[2026-08-24 15:14:43] [INFO] Contact buttons found: 1
+[2026-08-24 15:14:43] [INFO] Scrape completed for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:14:43] [INFO] Scraping completed for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:14:43] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02.png
+[2026-08-24 15:14:43] [INFO] HTML ZIP created: bd600e6282b620adefdfff02_lander.zip (3.7 KB)
+[2026-08-24 15:14:43] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip
+[2026-08-24 15:14:43] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:14:43] [WARNING] upload_media failed (attempt 1/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 2.0s
+[2026-08-24 15:14:45] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:14:45] [WARNING] upload_media failed (attempt 2/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 4.0s
+[2026-08-24 15:14:49] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:14:49] [WARNING] upload_media failed (attempt 3/3): /api/v1/admob/landers/upload_admob_blackhat -- retrying in 6.0s
+[2026-08-24 15:14:55] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:14:55] [ERROR] Upload failed for ad_id=bd600e6282b620adefdfff02: /api/v1/admob/landers/upload_admob_blackhat
+[2026-08-24 15:14:55] [INFO] Pydantic validation PASSED for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:14:55] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:14:55] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:14:55] [ERROR] Insert payload missing required fields for ad_id=bd600e6282b620adefdfff02: ['screen_shot']
+[2026-08-24 15:14:55] [INFO] Switching to status=3 (redirect-only) for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:14:55] [INFO] Insert lander started for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:14:55] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 1/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:14:57] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 2/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:15:01] [WARNING] Insert transient error for ad_id=bd600e6282b620adefdfff02 (attempt 3/3): /api/v1/admob/landers/insert_html_content
+[2026-08-24 15:15:01] [ERROR] Insert failed for ad_id=bd600e6282b620adefdfff02: [API_CONNECTION_ERROR] Insert failed after 3 attempts
+[2026-08-24 15:15:01] [WARNING] Failed to clean up temp file C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Tanmoy Patra\\main admob\\data\\screenshots\\bd600e6282b620adefdfff02_lander.zip'
+[2026-08-24 15:15:01] [INFO] Waiting 30.0s gap before next ad instance...
+[2026-08-24 15:22:58] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:22:58] [INFO] Loaded Configuration:
+[2026-08-24 15:22:58] [INFO]   HIT_GET_API: False
+[2026-08-24 15:22:58] [INFO]   HEADLESS: True
+[2026-08-24 15:22:58] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:22:58] [INFO]   INSTANCES: 10
+[2026-08-24 15:22:58] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:22:58] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:22:58] [INFO] ============================================================
+[2026-08-24 15:22:58] [INFO] Starting Execution Cycle #1 (HIT_GET_API=False)
+[2026-08-24 15:22:58] [INFO] ============================================================
+[2026-08-24 15:22:58] [INFO] [HIT_GET_API=false] Checking local cache file C:\Tanmoy Patra\main admob\data\ads.json...
+[2026-08-24 15:22:58] [INFO] Found 8 uncompleted ad(s) in local C:\Tanmoy Patra\main admob\data\ads.json cache.
+[2026-08-24 15:22:58] [INFO] Processing 8 ad(s) in cycle #1...
+[2026-08-24 15:22:58] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:22:58] [INFO] --- Ad 1/2: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:22:58] [INFO] ============================================================
+[2026-08-24 15:22:58] [INFO] API Pipeline: ad_id=bd600e6282b620adefdfff02 destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:22:58] [INFO] ============================================================
+[2026-08-24 15:22:58] [INFO] Updated AdMod_Data.json record for ad_id=bd600e6282b620adefdfff02 (status=2)
+[2026-08-24 15:22:58] [INFO] Scraping ad_id=bd600e6282b620adefdfff02 via proxy country=IN
+[2026-08-24 15:22:58] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:23:06] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:23:06] [INFO] WhatsApp links found: 0
+[2026-08-24 15:23:07] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:23:08] [INFO] Screenshot saved: bd600e6282b620adefdfff02.png
+[2026-08-24 15:23:08] [INFO] Phone numbers found: 1
+[2026-08-24 15:23:08] [INFO] Contact buttons found: 1
+[2026-08-24 15:23:08] [INFO] Scrape completed for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:23:08] [INFO] Scraping completed for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:23:08] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02.png
+[2026-08-24 15:23:08] [INFO] HTML ZIP created: bd600e6282b620adefdfff02_lander.zip (3.7 KB)
+[2026-08-24 15:23:08] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\bd600e6282b620adefdfff02_lander.zip
+[2026-08-24 15:23:08] [INFO] Upload started for ad_id=bd600e6282b620adefdfff02 country=IN
+[2026-08-24 15:23:08] [INFO] Upload completed for ad_id=bd600e6282b620adefdfff02 — image_path=/pas-dev/stream/admob/whiteHatAd/202608/bd600e6282b620adefdfff02.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/bd600e6282b620adefdfff02.zip
+[2026-08-24 15:23:08] [INFO] Upload completed — image_path=/pas-dev/stream/admob/whiteHatAd/202608/bd600e6282b620adefdfff02.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/bd600e6282b620adefdfff02.zip
+[2026-08-24 15:23:08] [INFO] Pydantic validation PASSED for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:23:08] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:23:08] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:23:08] [INFO] Insert lander started for ad_id=bd600e6282b620adefdfff02
+[2026-08-24 15:23:08] [INFO] Insert completed for ad_id=bd600e6282b620adefdfff02 — id=1403 mysql_saved=True elastic_indexed=True redirect_status=4 skipped_content=False
+[2026-08-24 15:23:08] [INFO] Pipeline COMPLETE for ad_id=bd600e6282b620adefdfff02 — mysql_saved=True elastic_indexed=True redirect_status=4
+[2026-08-24 15:23:08] [INFO] Waiting 30.0s gap before next ad instance...
+[2026-08-24 15:26:15] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:26:15] [INFO] Loaded Configuration:
+[2026-08-24 15:26:15] [INFO]   HIT_GET_API: True
+[2026-08-24 15:26:15] [INFO]   HEADLESS: True
+[2026-08-24 15:26:15] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:26:15] [INFO]   INSTANCES: 10
+[2026-08-24 15:26:15] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:26:15] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:26:16] [INFO] ============================================================
+[2026-08-24 15:26:16] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:26:16] [INFO] ============================================================
+[2026-08-24 15:26:16] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:26:16] [INFO] [GET Stage] Hitting GET API: https://stagingtest-api.poweradspy.com/api/v1/admob/landers/get_ads_for_blackhat
+[2026-08-24 15:26:16] [INFO] Saved complete GET API response to C:\Tanmoy Patra\main admob\data\ads.json
+[2026-08-24 15:26:17] [INFO] Processing 50 ad(s) in cycle #1...
+[2026-08-24 15:26:17] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:26:17] [INFO] --- Ad 1/2: ad_id=50f14f833bc90511820c99c6 destination=https://ankittailors.site/?gad_source=5&gad_campaignid=24167256142 ---
+[2026-08-24 15:26:17] [INFO] ============================================================
+[2026-08-24 15:26:17] [INFO] API Pipeline: ad_id=50f14f833bc90511820c99c6 destination=https://ankittailors.site/?gad_source=5&gad_campaignid=24167256142 countries=['India']
+[2026-08-24 15:26:17] [INFO] ============================================================
+[2026-08-24 15:26:17] [INFO] Updated AdMod_Data.json record for ad_id=50f14f833bc90511820c99c6 (status=1)
+[2026-08-24 15:26:17] [INFO] Scraping ad_id=50f14f833bc90511820c99c6 via proxy country=IN
+[2026-08-24 15:26:17] [INFO] Navigation started: https://ankittailors.site/?gad_source=5&gad_campaignid=24167256142 (proxy country=IN)
+[2026-08-24 15:26:28] [INFO] Redirects detected: 1 | Destination: https://ankittailors.site/?gad_source=5&gad_campaignid=24167256142
+[2026-08-24 15:26:28] [INFO] WhatsApp links found: 1
+[2026-08-24 15:26:30] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:26:30] [INFO] Screenshot saved: 50f14f833bc90511820c99c6.png
+[2026-08-24 15:26:30] [INFO] Phone numbers found: 0
+[2026-08-24 15:26:30] [INFO] Contact buttons found: 1
+[2026-08-24 15:26:30] [INFO] Scrape completed for ad_id=50f14f833bc90511820c99c6 country=IN
+[2026-08-24 15:26:30] [INFO] Scraping completed for ad_id=50f14f833bc90511820c99c6
+[2026-08-24 15:26:30] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\50f14f833bc90511820c99c6.png
+[2026-08-24 15:26:30] [INFO] HTML ZIP created: 50f14f833bc90511820c99c6_lander.zip (11.9 KB)
+[2026-08-24 15:26:30] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\50f14f833bc90511820c99c6_lander.zip
+[2026-08-24 15:26:30] [INFO] Upload started for ad_id=50f14f833bc90511820c99c6 country=IN
+[2026-08-24 15:26:31] [INFO] Upload completed for ad_id=50f14f833bc90511820c99c6 — image_path=/pas-dev/stream/admob/whiteHatAd/202608/50f14f833bc90511820c99c6.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/50f14f833bc90511820c99c6.zip
+[2026-08-24 15:26:31] [INFO] Upload completed — image_path=/pas-dev/stream/admob/whiteHatAd/202608/50f14f833bc90511820c99c6.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/50f14f833bc90511820c99c6.zip
+[2026-08-24 15:26:31] [INFO] Pydantic validation PASSED for ad_id=50f14f833bc90511820c99c6
+[2026-08-24 15:26:31] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:26:31] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=50f14f833bc90511820c99c6
+[2026-08-24 15:26:31] [INFO] Insert lander started for ad_id=50f14f833bc90511820c99c6
+[2026-08-24 15:26:31] [INFO] Insert completed for ad_id=50f14f833bc90511820c99c6 — id=1869 mysql_saved=True elastic_indexed=True redirect_status=4 skipped_content=False
+[2026-08-24 15:26:31] [INFO] Pipeline COMPLETE for ad_id=50f14f833bc90511820c99c6 — mysql_saved=True elastic_indexed=True redirect_status=4
+[2026-08-24 15:26:31] [INFO] Waiting 30.0s gap before next ad instance...
+[2026-08-24 15:45:33] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:45:33] [INFO] Loaded Configuration:
+[2026-08-24 15:45:33] [INFO]   HIT_GET_API: True
+[2026-08-24 15:45:33] [INFO]   HEADLESS: True
+[2026-08-24 15:45:33] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:45:33] [INFO]   INSTANCES: 10
+[2026-08-24 15:45:33] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:45:33] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:45:33] [INFO] ============================================================
+[2026-08-24 15:45:33] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:45:33] [INFO] ============================================================
+[2026-08-24 15:45:33] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:45:33] [INFO] [GET Stage] Hitting GET API: https://stagingtest-api.poweradspy.com/api/v1/admob/landers/get_ads_for_blackhat
+[2026-08-24 15:45:33] [INFO] Saved complete GET API response to C:\Tanmoy Patra\main admob\data\ads.json
+[2026-08-24 15:45:34] [INFO] Processing 50 ad(s) in cycle #1...
+[2026-08-24 15:45:34] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:45:34] [INFO] --- Ad 1/2: ad_id=e3979e4adb9f1514104ffc53 destination=https://thalaclothe.shop/?gad_source=5&gad_campaignid=24070998949 ---
+[2026-08-24 15:45:34] [INFO] ============================================================
+[2026-08-24 15:45:34] [INFO] API Pipeline: ad_id=e3979e4adb9f1514104ffc53 destination=https://thalaclothe.shop/?gad_source=5&gad_campaignid=24070998949 countries=['India']
+[2026-08-24 15:45:34] [INFO] ============================================================
+[2026-08-24 15:45:34] [INFO] Updated AdMod_Data.json record for ad_id=e3979e4adb9f1514104ffc53 (status=1)
+[2026-08-24 15:45:34] [INFO] Scraping ad_id=e3979e4adb9f1514104ffc53 via proxy country=IN
+[2026-08-24 15:45:34] [INFO] Navigation started: https://thalaclothe.shop/?gad_source=5&gad_campaignid=24070998949 (proxy country=IN)
+[2026-08-24 15:45:47] [INFO] Redirects detected: 1 | Destination: https://thalaclothe.shop/?gad_source=5&gad_campaignid=24070998949
+[2026-08-24 15:45:47] [INFO] WhatsApp links found: 1
+[2026-08-24 15:45:49] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:45:50] [INFO] Screenshot saved: e3979e4adb9f1514104ffc53.png
+[2026-08-24 15:45:50] [INFO] Phone numbers found: 0
+[2026-08-24 15:45:50] [INFO] Contact buttons found: 1
+[2026-08-24 15:45:50] [INFO] Scrape completed for ad_id=e3979e4adb9f1514104ffc53 country=IN
+[2026-08-24 15:45:50] [INFO] Scraping completed for ad_id=e3979e4adb9f1514104ffc53
+[2026-08-24 15:45:50] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\e3979e4adb9f1514104ffc53.png
+[2026-08-24 15:45:50] [INFO] HTML ZIP created: e3979e4adb9f1514104ffc53_lander.zip (2.8 KB)
+[2026-08-24 15:45:50] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\e3979e4adb9f1514104ffc53_lander.zip
+[2026-08-24 15:45:50] [INFO] Upload started for ad_id=e3979e4adb9f1514104ffc53 country=IN
+[2026-08-24 15:45:51] [INFO] Upload completed for ad_id=e3979e4adb9f1514104ffc53 — image_path=/pas-dev/stream/admob/whiteHatAd/202608/e3979e4adb9f1514104ffc53.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/e3979e4adb9f1514104ffc53.zip
+[2026-08-24 15:45:51] [INFO] Upload completed — image_path=/pas-dev/stream/admob/whiteHatAd/202608/e3979e4adb9f1514104ffc53.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/e3979e4adb9f1514104ffc53.zip
+[2026-08-24 15:45:51] [INFO] Pydantic validation PASSED for ad_id=e3979e4adb9f1514104ffc53
+[2026-08-24 15:45:51] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:45:51] [INFO] Persisted validated AdMod_Data.json record locally for ad_id=e3979e4adb9f1514104ffc53
+[2026-08-24 15:45:51] [INFO] Insert lander started for ad_id=e3979e4adb9f1514104ffc53
+[2026-08-24 15:45:51] [INFO] Insert completed for ad_id=e3979e4adb9f1514104ffc53 — id=1565 mysql_saved=True elastic_indexed=True redirect_status=4 skipped_content=False
+[2026-08-24 15:45:51] [INFO] Pipeline COMPLETE for ad_id=e3979e4adb9f1514104ffc53 — mysql_saved=True elastic_indexed=True redirect_status=4
+[2026-08-24 15:45:51] [INFO] Waiting 30.0s gap before next ad instance...
+[2026-08-24 15:46:21] [INFO] --- Ad 2/2: ad_id=b36b1c2da1c763d7eebebbe5 destination=https://rrmediaproductions.store/?gad_source=5&gad_campaignid=24156412288 ---
+[2026-08-24 15:46:21] [INFO] ============================================================
+[2026-08-24 15:46:21] [INFO] API Pipeline: ad_id=b36b1c2da1c763d7eebebbe5 destination=https://rrmediaproductions.store/?gad_source=5&gad_campaignid=24156412288 countries=['India']
+[2026-08-24 15:46:21] [INFO] ============================================================
+[2026-08-24 15:46:21] [INFO] Updated AdMod_Data.json record for ad_id=b36b1c2da1c763d7eebebbe5 (status=1)
+[2026-08-24 15:46:21] [INFO] Scraping ad_id=b36b1c2da1c763d7eebebbe5 via proxy country=IN
+[2026-08-24 15:50:17] [INFO] Starting AdMob Multi-Geolocation Advertisement Data Extraction System
+[2026-08-24 15:50:17] [INFO] Loaded Configuration:
+[2026-08-24 15:50:17] [INFO]   HIT_GET_API: True
+[2026-08-24 15:50:17] [INFO]   HEADLESS: True
+[2026-08-24 15:50:17] [INFO]   BRIGHT_PROXIES: True
+[2026-08-24 15:50:17] [INFO]   INSTANCES: 10
+[2026-08-24 15:50:17] [INFO]   TIME_GAP_IN_INSTANCES: 30.0s
+[2026-08-24 15:50:17] [INFO]   MAX_ADS_PER_CYCLE: 2
+[2026-08-24 15:50:17] [INFO] ============================================================
+[2026-08-24 15:50:17] [INFO] Starting Execution Cycle #1 (HIT_GET_API=True)
+[2026-08-24 15:50:17] [INFO] ============================================================
+[2026-08-24 15:50:17] [INFO] [HIT_GET_API=true] Directly calling GET API...
+[2026-08-24 15:50:17] [INFO] [GET Stage] Hitting GET API: https://stagingtest-api.poweradspy.com/api/v1/admob/landers/get_ads_for_blackhat
+[2026-08-24 15:50:18] [INFO] Saved complete GET API response to C:\Tanmoy Patra\main admob\data\ads.json
+[2026-08-24 15:50:19] [INFO] Processing 50 ad(s) in cycle #1...
+[2026-08-24 15:50:19] [INFO] Scraping 2 ad(s) (MAX_ADS_PER_CYCLE=2)...
+[2026-08-24 15:50:19] [INFO] --- Ad 1/2: ad_id=6964dcbe7e691f7ec2b87c7f destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 ---
+[2026-08-24 15:50:19] [INFO] ============================================================
+[2026-08-24 15:50:19] [INFO] API Pipeline: ad_id=6964dcbe7e691f7ec2b87c7f destination=https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 countries=['India']
+[2026-08-24 15:50:19] [INFO] ============================================================
+[2026-08-24 15:50:19] [INFO] Updated AdMob_Data.json record for ad_id=6964dcbe7e691f7ec2b87c7f (status=1)
+[2026-08-24 15:50:19] [INFO] Scraping ad_id=6964dcbe7e691f7ec2b87c7f via proxy country=IN
+[2026-08-24 15:50:19] [INFO] Navigation started: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193 (proxy country=IN)
+[2026-08-24 15:50:27] [INFO] Redirects detected: 1 | Destination: https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193
+[2026-08-24 15:50:27] [INFO] WhatsApp links found: 0
+[2026-08-24 15:50:29] [INFO] Geolocation detected: IN (requested: IN)
+[2026-08-24 15:50:29] [INFO] Screenshot saved: 6964dcbe7e691f7ec2b87c7f.png
+[2026-08-24 15:50:29] [INFO] Phone numbers found: 1
+[2026-08-24 15:50:29] [INFO] Contact buttons found: 1
+[2026-08-24 15:50:29] [INFO] Scrape completed for ad_id=6964dcbe7e691f7ec2b87c7f country=IN
+[2026-08-24 15:50:29] [INFO] Scraping completed for ad_id=6964dcbe7e691f7ec2b87c7f
+[2026-08-24 15:50:29] [INFO] Screenshot generated and stored locally: C:\Tanmoy Patra\main admob\data\screenshots\6964dcbe7e691f7ec2b87c7f.png
+[2026-08-24 15:50:29] [INFO] HTML ZIP created: 6964dcbe7e691f7ec2b87c7f_lander.zip (3.7 KB)
+[2026-08-24 15:50:29] [INFO] ZIP generated: C:\Tanmoy Patra\main admob\data\screenshots\6964dcbe7e691f7ec2b87c7f_lander.zip
+[2026-08-24 15:50:29] [INFO] Upload started for ad_id=6964dcbe7e691f7ec2b87c7f country=IN
+[2026-08-24 15:50:30] [INFO] Upload completed for ad_id=6964dcbe7e691f7ec2b87c7f — image_path=/pas-dev/stream/admob/whiteHatAd/202608/6964dcbe7e691f7ec2b87c7f.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/6964dcbe7e691f7ec2b87c7f.zip
+[2026-08-24 15:50:30] [INFO] Upload completed — image_path=/pas-dev/stream/admob/whiteHatAd/202608/6964dcbe7e691f7ec2b87c7f.png html_path=/pas-dev/stream/admob/whiteHatAd/202608/6964dcbe7e691f7ec2b87c7f.zip
+[2026-08-24 15:50:30] [INFO] Pydantic validation PASSED for ad_id=6964dcbe7e691f7ec2b87c7f
+[2026-08-24 15:50:30] [INFO] Saved single validated payload to C:\Tanmoy Patra\main admob\data\validated_payload.json
+[2026-08-24 15:50:30] [INFO] Persisted validated AdMob_Data.json record locally for ad_id=6964dcbe7e691f7ec2b87c7f
+[2026-08-24 15:50:30] [INFO] Insert lander started for ad_id=6964dcbe7e691f7ec2b87c7f
+[2026-08-24 15:50:30] [INFO] Insert completed for ad_id=6964dcbe7e691f7ec2b87c7f — id=1287 mysql_saved=True elastic_indexed=True redirect_status=4 skipped_content=False
+[2026-08-24 15:50:30] [INFO] Pipeline COMPLETE for ad_id=6964dcbe7e691f7ec2b87c7f — mysql_saved=True elastic_indexed=True redirect_status=4
+[2026-08-24 15:50:30] [INFO] Waiting 30.0s gap before next ad instance...
