@@ -1,0 +1,1470 @@
+Software Requirements Specification (SRS)
+AdMob Multi-Geolocation Advertisement Data Extraction System
+
+Document Version: 2.0
+Status: Draft for Development
+Primary Language: Python
+Browser Automation: Playwright
+Data Validation: Pydantic
+Initial Storage: JSON
+Proxy Provider: Bright Data ISP Proxy
+
+1. Purpose
+
+The purpose of this project is to build an automated Playwright-based system that processes a configurable list of target URLs and collects advertisement-related information through multiple proxy geolocations.
+
+For every target URL, the system will:
+
+Visit the URL using Playwright.
+Rotate through different proxy countries.
+Perform the extraction using at least 10 successful unique geolocations.
+Capture the redirect chain.
+Identify the final destination URL.
+Extract campaign-related URL parameters.
+Find publicly accessible WhatsApp links on the destination page.
+Extract available WhatsApp URL information.
+Retrieve the actual proxy/IP geolocation.
+Aggregate all geolocation results into one advertisement record.
+Store the completed record in AdMod_Data.json.
+Core data rule
+
+One target URL = one add-id.
+
+Multiple proxy/geolocation observations for the same URL are stored inside that URL's "country" list.
+
+2. Scope
+2.1 In Scope
+
+The system will support:
+
+Configurable target URL list.
+Bright Data ISP proxy integration.
+Dynamic country-based proxy rotation.
+Random country selection.
+Prevention of duplicate country selection for the same URL.
+Minimum 10 successful geolocation observations per URL.
+Playwright browser automation.
+Redirect tracking.
+Final destination detection.
+Campaign parameter extraction.
+WhatsApp URL detection.
+WhatsApp data extraction.
+WhatsApp URL deduplication.
+Proxy/IP geolocation retrieval.
+Pydantic validation.
+Incremental JSON persistence.
+Resume capability.
+Retry mechanisms.
+Browser crash recovery.
+Proxy failure handling.
+Navigation timeout handling.
+CAPTCHA detection and safe handling.
+Structured error handling.
+Application logging.
+Configuration management.
+Secure proxy credential management.
+2.2 Out of Scope
+
+The system will not:
+
+Bypass authentication.
+Access private accounts.
+Circumvent access-control mechanisms.
+Bypass CAPTCHAs.
+Attempt to defeat anti-bot/security mechanisms.
+Send WhatsApp messages.
+Modify WhatsApp accounts.
+Collect private WhatsApp information.
+Store proxy passwords in output data.
+Guarantee that the requested proxy country always matches the actual detected IP country.
+3. Business Objective
+
+The system is intended to answer questions such as:
+
+What destination does a given advertisement URL redirect to?
+What campaign information is associated with the URL?
+Which WhatsApp links are present on the destination page?
+What WhatsApp information can be extracted from those links?
+How does the destination behave when accessed from different geographic locations?
+What actual IP/geolocation was used for each observation?
+4. Fundamental Data Model
+
+The project will use the following model:
+
+Target URL
+    │
+    ├── Proxy Country 1 → Geolocation 1
+    ├── Proxy Country 2 → Geolocation 2
+    ├── Proxy Country 3 → Geolocation 3
+    ├── Proxy Country 4 → Geolocation 4
+    ├── ...
+    └── Proxy Country 10 → Geolocation 10
+              │
+              ▼
+        ONE Advertisement Record
+              │
+              ▼
+           add-id = 1
+
+For example:
+
+URL A
+ ├── GB
+ ├── US
+ ├── DE
+ ├── IN
+ ├── JP
+ ├── CA
+ ├── FR
+ ├── AU
+ ├── SG
+ └── IT
+
+
+        ↓
+
+
+add-id = 1
+
+The next target URL becomes:
+
+URL B → add-id = 2
+5. Target URL Configuration
+
+Target URLs must be maintained separately from the application logic.
+
+Recommended file:
+
+data/urls.json
+
+Example:
+
+{
+  "urls": [
+    "https://example1.com",
+    "https://example2.com",
+    "https://example3.com"
+  ]
+}
+
+The operator must be able to add or remove URLs without changing the scraper source code.
+
+6. Proxy Configuration
+
+The system will use Bright Data ISP proxies.
+
+The base configuration should be stored securely.
+
+Example:
+
+BRIGHTDATA_CUSTOMER=...
+BRIGHTDATA_ZONE=...
+BRIGHTDATA_PASSWORD=...
+BRIGHTDATA_HOST=brd.superproxy.io
+BRIGHTDATA_PORT=44445
+
+The country must be dynamically added to the proxy username/configuration.
+
+Conceptually:
+
+country = gb
+        ↓
+proxy configuration for GB
+
+Then:
+
+country = us
+        ↓
+proxy configuration for US
+
+The exact proxy credential must never be written to the output JSON.
+
+7. Proxy Country Management
+
+The system must maintain a configurable list of supported countries.
+
+Example:
+
+PROXY_COUNTRIES = [
+    "us",
+    "gb",
+    "de",
+    "fr",
+    "in",
+    "jp",
+    "ca",
+    "au",
+    "sg",
+    "it"
+]
+
+The system will:
+
+Randomly select a country.
+Check whether that country was already used for the current URL.
+If already used, select another country.
+If unused, use the country.
+Record the country as attempted.
+Continue until the required number of successful geolocations is reached.
+8. Unique Country Requirement
+
+The same proxy country must not be intentionally selected twice for the same target URL during one execution.
+
+Example:
+
+GB → success
+US → success
+DE → failed
+IN → success
+
+The system must not intentionally select:
+
+GB
+
+again for that URL.
+
+A failed country attempt is still considered attempted and should not be randomly selected again during the same URL processing cycle unless a future configuration explicitly permits retries of the same country.
+
+9. Minimum Geolocation Requirement
+
+Every target URL should attempt to obtain:
+
+10 successful geolocation observations
+
+Example:
+
+URL A
+
+
+GB → success
+US → success
+DE → success
+IN → success
+JP → success
+CA → success
+FR → success
+AU → success
+SG → success
+IT → success
+
+
+10 successful observations
+
+The system then finalizes the URL's single add-id record.
+
+10. Handling Insufficient Successful Countries
+
+The system must handle the situation where 10 successful observations cannot be obtained.
+
+Example:
+
+20 countries available
+
+
+15 failed
+5 succeeded
+
+The system must not falsely report:
+
+10 successful geolocations
+
+Instead it should:
+
+Log the incomplete result.
+Preserve successful observations.
+Record the URL as incomplete internally.
+Continue processing other target URLs.
+
+Recommended internal state:
+
+required_geolocations = 10
+successful_geolocations = 5
+status = incomplete
+
+The final business decision of whether incomplete URL records are accepted as final output should remain configurable.
+
+11. Browser Automation
+
+Playwright will be used for browser automation.
+
+The browser manager will be responsible for:
+
+Playwright initialization.
+Browser launch.
+Browser/context creation.
+Page creation.
+Browser cleanup.
+Browser restart.
+Timeout configuration.
+Browser crash recovery.
+12. Browser Lifecycle
+
+The system should avoid unnecessarily creating a completely new Playwright installation for every proxy attempt.
+
+Recommended architecture:
+
+Application
+    ↓
+Playwright
+    ↓
+Browser lifecycle manager
+    ↓
+Target URL
+    ↓
+Proxy context/page
+
+If the browser crashes:
+
+Browser crash
+     ↓
+Cleanup
+     ↓
+Reinitialize
+     ↓
+Retry
+13. Browser Startup Failure
+
+The system must explicitly handle errors such as:
+
+BrowserType.launch:
+Connection closed while reading from the driver
+
+This error indicates that communication between the Python Playwright client and its driver/browser process was unexpectedly terminated.
+
+Potential causes include:
+
+Browser process crash.
+Playwright driver failure.
+Browser binary problems.
+Playwright/browser version mismatch.
+Resource exhaustion.
+Security/antivirus interference.
+Invalid browser launch configuration.
+Too many browser processes.
+Environment-specific process termination.
+
+The system must treat this as a browser infrastructure error, not a normal website scraping error.
+
+14. Browser Error Recovery
+
+When browser startup fails:
+
+Launch browser
+      │
+      ▼
+Failure?
+ ┌────┴────┐
+ No        Yes
+ │          │
+ ▼          ▼
+Continue   Log error
+              │
+              ▼
+        Cleanup resources
+              │
+              ▼
+        Reinitialize
+              │
+              ▼
+           Retry
+
+The number of browser startup retries must be configurable.
+
+Example:
+
+BROWSER_START_RETRIES = 3
+
+After all retries fail, the current URL attempt should be marked appropriately and the application should continue to the next URL where possible.
+
+15. Navigation
+
+For each proxy attempt, Playwright must navigate to the configured target URL.
+
+The system must use configurable:
+
+PAGE_TIMEOUT = 30_000
+
+Navigation failures must not terminate the entire application.
+
+16. Redirect Tracking
+
+The system must capture URLs encountered during navigation.
+
+Example:
+
+Original URL
+    ↓
+Redirect 1
+    ↓
+Redirect 2
+    ↓
+Redirect 3
+    ↓
+Final Destination
+
+The result should be stored as:
+
+"redirect_urls": [
+  "https://original.example",
+  "https://redirect1.example",
+  "https://redirect2.example"
+]
+17. Destination URL
+
+The final destination URL must be stored in:
+
+"Destination_urls": "https://destination.example.com"
+
+The field name should remain exactly as required by the existing JSON format.
+
+If no final destination can be established:
+
+"Destination_urls": null
+18. Redirect Loop Protection
+
+The scraper must protect against redirect loops.
+
+Example:
+
+A → B → C → A → B → C
+
+Recommended configuration:
+
+MAX_REDIRECTS = 30
+
+If the limit is reached:
+
+Stop navigation.
+Log the redirect-loop error.
+Mark the proxy attempt as failed.
+Continue with another country.
+19. Campaign Parameter Extraction
+
+The system must extract:
+
+camplainid
+gad_source
+gclid
+
+from the applicable URL.
+
+Example:
+
+https://example.com/?gad_source=5&gad_campaignid=24107228296&gclid=ABC123
+
+Result:
+
+{
+  "camplainid": "24107228296",
+  "gad_source": "5",
+  "gclid": "ABC123"
+}
+
+If a parameter does not exist:
+
+"gad_source": null
+
+The system must not invent missing values.
+
+20. WhatsApp Link Detection
+
+The destination page must be inspected for publicly accessible WhatsApp links.
+
+The detection logic should be configurable and should support relevant WhatsApp URL patterns.
+
+Potential examples include:
+
+https://wa.me/...
+https://api.whatsapp.com/...
+
+The exact supported patterns should be maintained in one dedicated module.
+
+21. WhatsApp Data
+
+For every unique WhatsApp link, the system will attempt to collect:
+
+whatsapp-url
+whatsapp-profile
+whatsapp-number
+whatsapp-message
+
+Example:
+
+{
+  "whatsapp-url": "https://wa.me/123456789?text=Hello",
+  "whatsapp-profile": null,
+  "whatsapp-number": "123456789",
+  "whatsapp-message": "Hello"
+}
+
+Unavailable fields must be represented by:
+
+null
+
+rather than fabricated values.
+
+22. WhatsApp Deduplication
+
+If the same WhatsApp URL appears multiple times on a page, it must be stored only once.
+
+Example:
+
+wa.me/123
+wa.me/123
+wa.me/456
+
+Output:
+
+"wa_data": [
+  {
+    "whatsapp-url": "https://wa.me/123"
+  },
+  {
+    "whatsapp-url": "https://wa.me/456"
+  }
+]
+23. No WhatsApp Links
+
+If no WhatsApp links are discovered, this is a valid result and must not be considered an application failure.
+
+Output:
+
+"wa_data": []
+24. Geolocation Retrieval
+
+For every successful proxy observation, the system must request:
+
+https://geo.brdtest.com/welcome.txt?product=isp&method=native
+
+The returned information should be parsed and normalized.
+
+The system should support fields such as:
+
+ip_version
+country
+asn
+geo
+25. Geolocation Structure
+
+Example:
+
+{
+  "ip_version": 4,
+  "country": "GB",
+  "asn": {
+    "asnum": 12345,
+    "org_name": "Example ISP"
+  },
+  "geo": {
+    "city": "London",
+    "region": "LND",
+    "region_name": "London",
+    "postal_code": "SW1A",
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "tz": "Europe/London",
+    "lum_city": "london",
+    "lum_region": "lnd"
+  }
+}
+26. Requested vs Actual Country
+
+The system should internally track:
+
+requested_proxy_country
+actual_detected_country
+
+For example:
+
+Requested: GB
+Detected:  LV
+
+This does not automatically mean that scraping failed.
+
+The actual returned geolocation must be preserved.
+
+The final JSON's "country" list contains the geolocation data returned from the geo service.
+
+27. One add-id Per URL
+
+This is the most important data requirement.
+
+Example:
+
+URL 1
+  ├── GB
+  ├── US
+  ├── DE
+  ├── IN
+  ├── JP
+  ├── CA
+  ├── FR
+  ├── AU
+  ├── SG
+  └── IT
+
+produces:
+
+{
+  "add-id": 1,
+  "url": "URL 1",
+  "country": [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ]
+}
+
+It must not produce ten separate add-id values.
+
+28. Final JSON Format
+
+The output file must remain:
+
+data/AdMod_Data.json
+
+Recommended structure:
+
+{
+  "network": "admob",
+  "database": "pasdev_admob",
+  "count": 1,
+  "ads": [
+    {
+      "add-id": 1,
+      "extracted_at": "2026-08-20T10:26:14.991Z",
+      "url": "https://seveneleven1.netlify.app/?gad_source=5&gad_campaignid=24107228296&gclid=ABC123",
+      "redirect_urls": [
+        "https://seveneleven1.netlify.app/?gad_source=5&gad_campaignid=24107228296&gclid=ABC123",
+        "https://redirect.example.com"
+      ],
+      "Destination_urls": "https://seveneleven1.netlify.app/",
+      "camplainid": "24107228296",
+      "gad_source": "5",
+      "gclid": "ABC123",
+      "wa_data": [
+        {
+          "whatsapp-url": "https://wa.me/123456789?text=Hello",
+          "whatsapp-profile": null,
+          "whatsapp-number": "123456789",
+          "whatsapp-message": "Hello"
+        }
+      ],
+      "country": [
+        {
+          "ip_version": 4,
+          "country": "GB",
+          "asn": {
+            "asnum": 12345,
+            "org_name": "Example ISP"
+          },
+          "geo": {
+            "city": "London",
+            "region": "LND",
+            "region_name": "London",
+            "postal_code": "SW1A",
+            "latitude": 51.5074,
+            "longitude": -0.1278,
+            "tz": "Europe/London",
+            "lum_city": "london",
+            "lum_region": "lnd"
+          }
+        },
+        {
+          "ip_version": 4,
+          "country": "US",
+          "asn": {
+            "asnum": 54321,
+            "org_name": "Example ISP"
+          },
+          "geo": {
+            "city": "New York",
+            "region": "NY",
+            "region_name": "New York",
+            "postal_code": "10001",
+            "latitude": 40.7128,
+            "longitude": -74.0060,
+            "tz": "America/New_York",
+            "lum_city": "newyork",
+            "lum_region": "ny"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+The exact property names provided by the existing project are retained.
+
+29. count Requirement
+
+count represents the total number of URL/ad records stored.
+
+For example:
+
+URL A → add-id 1
+URL B → add-id 2
+URL C → add-id 3
+
+then:
+
+"count": 3
+
+The system should calculate/update this value from the stored records rather than relying solely on an in-memory variable.
+
+30. add-id Generation
+
+The system must ensure that every URL receives a unique add-id.
+
+Example:
+
+Existing:
+1
+2
+3
+
+
+New URL:
+4
+
+The ID must remain unique even after application restart.
+
+31. Extraction Timestamp
+
+The field:
+
+"extracted_at": "2026-08-20T10:26:14.991Z"
+
+represents when the URL extraction process was completed.
+
+The system should use UTC ISO 8601 format.
+
+32. Error Handling Architecture
+
+The project must distinguish between different error categories.
+
+Recommended internal error types:
+
+BROWSER_STARTUP_ERROR
+BROWSER_CRASH
+PLAYWRIGHT_DRIVER_ERROR
+PROXY_CONNECTION_ERROR
+PROXY_AUTHENTICATION_ERROR
+NAVIGATION_TIMEOUT
+NAVIGATION_ERROR
+REDIRECT_LOOP_ERROR
+DESTINATION_ERROR
+GEOLOCATION_ERROR
+WHATSAPP_EXTRACTION_ERROR
+JSON_STORAGE_ERROR
+INVALID_URL_ERROR
+CAPTCHA_DETECTED
+UNKNOWN_ERROR
+
+This allows troubleshooting without examining a generic "failed" message.
+
+33. Country-Level Failure
+
+A proxy country failure must not terminate URL processing.
+
+Example:
+
+URL A
+
+
+GB → success
+US → proxy failure
+DE → success
+IN → success
+
+The system continues.
+
+The failed attempt must not be added to the successful geolocation count.
+
+34. URL-Level Failure
+
+If the complete URL cannot be processed after the configured retries and available countries are exhausted:
+
+URL A → incomplete/failed
+
+the system must continue:
+
+URL B → process
+URL C → process
+
+One bad URL must never terminate the complete job.
+
+35. CAPTCHA Handling
+
+If a CAPTCHA or access challenge is detected:
+
+Do not attempt to bypass it.
+Log the event.
+Mark the current proxy attempt unsuccessful.
+Close/reinitialize the relevant browser context if necessary.
+Continue with another configured country.
+36. Retry Policy
+
+Retries must be configurable.
+
+Example:
+
+MAX_RETRIES = 3
+
+Retryable operations may include:
+
+Browser startup.
+Browser recovery.
+Proxy connection.
+Navigation.
+Geolocation request.
+
+Retries should use controlled delays rather than immediate infinite retry loops.
+
+37. Timeout Management
+
+Separate timeout values should be configurable.
+
+Example:
+
+PAGE_TIMEOUT = 30_000
+GEO_TIMEOUT = 10_000
+BROWSER_START_TIMEOUT = 30_000
+
+No operation should be allowed to wait indefinitely.
+
+38. JSON Persistence
+
+The system must save data incrementally.
+
+Recommended workflow:
+
+Process URL
+    ↓
+Collect geolocation 1
+    ↓
+Collect geolocation 2
+    ↓
+...
+    ↓
+Collect geolocation 10
+    ↓
+Finalize URL record
+    ↓
+Validate
+    ↓
+Write JSON
+
+This prevents loss of previously completed URL records.
+
+39. Atomic JSON Writing
+
+To reduce JSON corruption:
+
+AdMod_Data.json
+      ↓
+Write temporary file
+      ↓
+Validate JSON
+      ↓
+Replace original file
+
+The application should avoid directly overwriting the primary file with partially generated content.
+
+40. Resume Capability
+
+If the application terminates unexpectedly:
+
+Ctrl+C
+Power failure
+Browser crash
+Machine restart
+
+previously stored URL records must remain available.
+
+When restarted, the application should inspect the existing JSON and determine which URLs still need processing.
+
+41. Duplicate URL Handling
+
+The system should define how duplicate target URLs are handled.
+
+Recommended default:
+
+If URL already has a completed ad record:
+    skip it
+
+This prevents accidental creation of duplicate add-ids.
+
+A configuration option can later allow reprocessing.
+
+42. Duplicate URL Normalization
+
+URLs should be normalized before duplicate comparison where appropriate.
+
+For example, the system should distinguish carefully between:
+
+https://example.com
+
+and:
+
+https://example.com/?x=1
+
+because query parameters may represent different advertisement observations.
+
+The normalization rules must not accidentally remove meaningful campaign parameters.
+
+43. Pydantic Validation
+
+Pydantic models must validate the output before it is persisted.
+
+Recommended models:
+
+AdMobData
+    └── ads: list[AdRecord]
+
+
+AdRecord
+    ├── add-id
+    ├── extracted_at
+    ├── url
+    ├── redirect_urls
+    ├── Destination_urls
+    ├── camplainid
+    ├── gad_source
+    ├── gclid
+    ├── wa_data
+    └── country
+
+
+WhatsAppData
+    ├── whatsapp-url
+    ├── whatsapp-profile
+    ├── whatsapp-number
+    └── whatsapp-message
+
+
+GeoData
+    ├── ip_version
+    ├── country
+    ├── asn
+    └── geo
+44. Logging
+
+The system must provide structured logs.
+
+Example:
+
+[INFO] Application started
+[INFO] Target URL: https://example.com
+[INFO] Selected proxy country: GB
+[INFO] Browser started
+[INFO] Navigation completed
+[INFO] Redirects detected: 3
+[INFO] Destination URL identified
+[INFO] WhatsApp links found: 2
+[INFO] Geolocation detected: GB
+[INFO] Successful geolocations: 1/10
+
+Failure:
+
+[ERROR] Proxy connection failed
+[ERROR] Country: DE
+[ERROR] URL: https://example.com
+[INFO] Selecting another country
+
+Browser failure:
+
+[ERROR] BROWSER_STARTUP_ERROR
+[ERROR] BrowserType.launch: Connection closed while reading from the driver
+[INFO] Attempting browser recovery
+45. Browser Resource Management
+
+The system must ensure:
+
+Browser contexts are closed.
+Pages are closed when no longer required.
+Browser processes are not leaked.
+Playwright is shut down gracefully.
+Crashed browser instances are cleaned up.
+Excessive browser creation is avoided.
+
+This is particularly important for long-running jobs processing many URLs.
+
+46. Security Requirements
+
+Proxy credentials must:
+
+Be stored outside source code.
+Be stored in environment variables or a secret manager.
+Never be written to AdMod_Data.json.
+Never be printed in logs.
+Never be committed to Git.
+
+The .env file must be included in .gitignore.
+
+47. Recommended Project Structure
+admob_scraper/
+│
+├── main.py
+│
+├── config.py
+├── models.py
+│
+├── proxy_manager.py
+├── browser_manager.py
+├── scraping_manager.py
+│
+├── redirect_tracker.py
+├── url_parser.py
+├── whatsapp_parser.py
+├── geo_service.py
+│
+├── retry_manager.py
+├── error_handler.py
+├── storage.py
+├── logger.py
+│
+├── data/
+│   ├── urls.json
+│   └── AdMod_Data.json
+│
+├── logs/
+│   └── scraper.log
+│
+├── .env
+├── .gitignore
+└── requirements.txt
+48. Module Responsibilities
+main.py
+
+Application entry point.
+
+Configuration
+    ↓
+URL loading
+    ↓
+Scraping manager
+    ↓
+Shutdown
+config.py
+
+Contains:
+
+Timeouts.
+Retry counts.
+Country list.
+File paths.
+Required geolocation count.
+Browser configuration.
+models.py
+
+Contains Pydantic models.
+
+proxy_manager.py
+
+Handles:
+
+Country selection.
+Duplicate-country prevention.
+Proxy generation.
+Proxy configuration.
+browser_manager.py
+
+Handles:
+
+Playwright.
+Browser startup.
+Browser recovery.
+Browser shutdown.
+Context creation.
+scraping_manager.py
+
+Controls the overall URL processing workflow.
+
+redirect_tracker.py
+
+Handles redirect collection.
+
+url_parser.py
+
+Handles URL query parameter extraction.
+
+whatsapp_parser.py
+
+Handles WhatsApp detection and extraction.
+
+geo_service.py
+
+Handles geolocation requests.
+
+retry_manager.py
+
+Handles controlled retries.
+
+error_handler.py
+
+Classifies and processes errors.
+
+storage.py
+
+Handles:
+
+JSON loading.
+ID generation.
+Record persistence.
+Atomic writes.
+Resume support.
+logger.py
+
+Handles application logs.
+
+49. End-to-End Workflow
+                         START
+                           ▼
+                 Start/reuse browser
+                           │
+                    ┌──────┴──────┐
+                    │             │
+                  Success       Failure
+                    │             │
+                    │             ▼
+                    │       Browser recovery
+                    │             │
+                    │             ▼
+                    │           Retry
+                    │
+                    ▼
+                Navigate URL
+                    │
+               ┌────┴────┐
+               │         │
+             Success    Failure
+               │         │
+               │         ▼
+               │    Retry/next country
+               │
+               ▼
+            Track redirects
+               │
+               ▼
+          Destination URL
+               │
+               ▼
+       Extract campaign data
+               │
+               ▼
+       Find WhatsApp links
+               │
+               ▼
+       Extract WhatsApp data
+               │
+               ▼
+         Geo API request
+               │
+          ┌────┴────┐
+          │         │
+        Success    Failure
+          │         │
+          │         ▼
+          │       Retry
+          │
+          ▼
+      Append geolocation
+          │
+          ▼
+      10 successes?
+       ┌──┴──┐
+      No    Yes
+       │      │
+       │      ▼
+       │  Finalize ad
+       │      │
+       │      ▼
+       │   Validate
+       │      │
+       │      ▼
+       │  Save JSON
+       │      │
+       └──────┤
+              ▼
+         Next URL
+              │
+              ▼
+             END
+50. Acceptance Criteria
+
+The system will be accepted when:
+
+AC-01
+
+The operator can maintain target URLs independently of scraper code.
+
+AC-02
+
+Each target URL receives exactly one add-id.
+
+AC-03
+
+Multiple geolocation observations are stored inside that URL's "country" list.
+
+AC-04
+
+The system attempts at least 10 successful unique geolocations per URL.
+
+AC-05
+
+The same country is not intentionally selected twice for the same URL.
+
+AC-06
+
+Proxy failures do not terminate the application.
+
+AC-07
+
+Browser startup failures are recovered through cleanup and retry.
+
+AC-08
+
+Navigation timeouts do not terminate the application.
+
+AC-09
+
+Redirect chains are captured.
+
+AC-10
+
+The final destination URL is stored.
+
+AC-11
+
+Campaign parameters are extracted.
+
+AC-12
+
+All unique detected WhatsApp links are stored.
+
+AC-13
+
+Missing WhatsApp information is represented as null.
+
+AC-14
+
+Actual geolocation data is stored for successful proxy observations.
+
+AC-15
+
+The output retains the agreed JSON structure.
+
+AC-16
+
+Data is validated before persistence.
+
+AC-17
+
+Data is saved incrementally.
+
+AC-18
+
+JSON corruption is minimized through atomic writes.
+
+AC-19
+
+The system can resume after interruption.
+
+AC-20
+
+One failed URL does not stop processing of other URLs.
+
+AC-21
+
+Proxy credentials never appear in output JSON or logs.
+
+AC-22
+
+CAPTCHA/access challenges are detected and handled without attempting to bypass them.
+
+51. Testing Requirements
+
+The following scenarios must be tested before production use:
+
+Test	Expected Result
+Valid URL	Successfully processed
+Invalid URL	Logged and skipped
+Proxy success	Geolocation recorded
+Proxy failure	Retry/next country
+Proxy authentication failure	Logged and skipped
+Browser launch failure	Recovery attempted
+Browser crash	Browser reinitialized
+Driver connection failure	Recovery attempted
+Navigation timeout	Retry/next country
+Redirect loop	Stopped safely
+No redirects	Valid result
+No WhatsApp links	wa_data: []
+One WhatsApp link	One record
+Multiple WhatsApp links	All unique records
+Duplicate WhatsApp links	Deduplicated
+WhatsApp extraction failure	Other data preserved
+Geo API failure	Retry
+Requested country ≠ detected country	Actual result preserved
+Less than 10 successful countries	Incomplete result handled
+JSON write failure	Error handled
+Application restart	Resume from existing data
+Duplicate target URL	According to configured policy
+CAPTCHA	Logged/skipped
+Very slow website	Timeout protection
+Browser resource leak	No uncontrolled process growth
+52. Development Phases
+Phase 1 — Project Foundation
+
+Implement:
+
+Configuration
+URL management
+Logging
+Pydantic models
+JSON storage
+Phase 2 — Proxy Management
+
+Implement:
+
+Country list
+Random selection
+Unique-country tracking
+Bright Data proxy generation
+Phase 3 — Browser Layer
+
+Implement:
+
+Playwright
+Browser manager
+Browser recovery
+Timeouts
+Context management
+Phase 4 — Navigation/Data Extraction
+
+Implement:
+
+URL navigation
+Redirect tracking
+Destination URL
+Campaign parameters
+Phase 5 — WhatsApp Extraction
+
+Implement:
+
+WhatsApp detection
+URL parsing
+Number extraction
+Message extraction
+Deduplication
+Phase 6 — Geolocation
+
+Implement:
+
+Geo endpoint
+Geo response parsing
+Pydantic validation
+Country aggregation
+Phase 7 — Reliability
+
+Implement:
+
+Retries
+Error classification
+Browser recovery
+Atomic writes
+Resume
+Phase 8 — Testing
+
+Perform the complete edge-case test matrix.
+
+Phase 9 — Production Hardening
+
+Add:
+
+Monitoring
+Metrics
+Docker
+Database migration
+Scheduling
+53. Future Architecture
+
+The initial system will use:
+
+Playwright
+    ↓
+Python
+    ↓
+Pydantic
+    ↓
+JSON
+
+The architecture should allow future migration to:
+
+Playwright
+    ↓
+Python
+    ↓
+Pydantic
+    ↓
+Storage abstraction
+    ↓
+PostgreSQL
+
+without rewriting the scraping layer.
+
+54. Final Project Definition
+
+The final system can be summarized as:
+
+             TARGET URL LIST
+                    │
+                    ▼
+             SCRAPING MANAGER
+                    │
+                    ▼
+               TARGET URL
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+      Proxy       Proxy       Proxy
+       GB           US          DE
+        │           │           │
+        ▼           ▼           ▼
+      Geo          Geo         Geo
+        │           │           │
+        └───────────┼───────────┘
+                    │
+                    ▼
+             DATA AGGREGATOR
+                    │
+                    ▼
+                ONE ad-id
+                    │
+                    ▼
+             Pydantic Validation
+                    │
+                    ▼
+             AdMod_Data.json
+                    │
+                    ▼
+              NEXT TARGET URL
+Core rule
+ONE URL
+   ↓
+ONE add-id
+   ↓
+ONE advertisement record
+   ↓
+MULTIPLE proxy/geolocation observations
+   ↓
+country[]
+
+This is the final SRS direction I recommend for the implementation.

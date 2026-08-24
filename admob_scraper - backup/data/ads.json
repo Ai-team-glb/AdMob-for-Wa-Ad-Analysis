@@ -1,0 +1,407 @@
+{
+  "code": 200,
+  "message": "Ads fetched successfully",
+  "data": [
+    {
+      "id": 1448,
+      "ad_id": "6399843f0167fead74e9875a",
+      "destination_url": "https://www.eyewearlabs.com/?gad_source=5&gad_campaignid=24162487672",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1447,
+      "ad_id": "ed5f959bdfce848a1eb7dad5",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1446,
+      "ad_id": "65c5304f399d5680b72495a0",
+      "destination_url": "https://sweet-lolly-92861c.netlify.app/?gad_source=5&gad_campaignid=24159009041",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1445,
+      "ad_id": "436ae1d57344658022b76097",
+      "destination_url": "https://somveerlunayach5553.systeme.io/8d516710?gad_source=5&gad_campaignid=24144446784",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1444,
+      "ad_id": "a351ca46e80dc3c1461c0122",
+      "destination_url": "https://muruganphoto01.blogspot.com/2026/08/murugan.html?gad_source=5&gad_campaignid=24138486646",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1442,
+      "ad_id": "1137e5d1eede6476e7f3ba22",
+      "destination_url": "https://nezax.shop/?gad_source=5&gad_campaignid=24119249483",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1440,
+      "ad_id": "697a809fe1fbcc75d3ba92c1",
+      "destination_url": "https://sweet-lolly-92861c.netlify.app/?gad_source=5&gad_campaignid=24159009041",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1439,
+      "ad_id": "5c50442f48bd466f2bff2712",
+      "destination_url": "https://rrmediaproductions.store/?gad_source=5&gad_campaignid=24156412288",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1438,
+      "ad_id": "5da1e511f63d53e3453b8429",
+      "destination_url": "https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1437,
+      "ad_id": "0efff75e0f822b4131951224",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1436,
+      "ad_id": "d4a6b29914d4e307f0224245",
+      "destination_url": "https://muruganphoto01.blogspot.com/2026/08/murugan.html?gad_source=5&gad_campaignid=24138486646",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1435,
+      "ad_id": "5db66a2fa84711ed608fac28",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1434,
+      "ad_id": "8b63fe2e21f589a96ec91588",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1433,
+      "ad_id": "46da258623ee079d54034e33",
+      "destination_url": "https://macbb7.netlify.app/?gad_source=5&gad_campaignid=24158447516",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1432,
+      "ad_id": "350ac3e23f45cb39d17de7fc",
+      "destination_url": "https://md0014.site/?gad_source=5&gad_campaignid=24143727331",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1431,
+      "ad_id": "c713d915ecf228d66f4afcce",
+      "destination_url": "https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1430,
+      "ad_id": "2e3a36325cd0e65cfab0f776",
+      "destination_url": "https://friendly-sopapillas-6359db.netlify.app/?gad_source=5&gad_campaignid=24154627919",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1429,
+      "ad_id": "6b8dd9f393ce88aa05723e3b",
+      "destination_url": "https://thejerseydugout.store/?gad_source=5&gad_campaignid=24128750385",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1428,
+      "ad_id": "f8c31c75c2b19cded18c45ad",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1426,
+      "ad_id": "68d5b5fec4f43b38f714f8c6",
+      "destination_url": "https://thejerseydugout.store/?gad_source=5&gad_campaignid=24128750385",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1425,
+      "ad_id": "64cdd5a13417890141ac0a03",
+      "destination_url": "https://victoriouselectricals.shop/?gad_source=5&gad_campaignid=24155597672",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1424,
+      "ad_id": "be0f33289a494c09df72f89b",
+      "destination_url": "https://shivamarketingtoday.online/?gad_source=5&gad_campaignid=24153734603",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1423,
+      "ad_id": "49d566fe3a5e08ba71dfbbca",
+      "destination_url": "https://www.shrishyam.shreeradhehub.co.in/?gad_source=5&gad_campaignid=24156604994",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1422,
+      "ad_id": "537fca54b20fd3ec4b504a5a",
+      "destination_url": "https://eaglestore24.shop/?gad_source=5&gad_campaignid=24148930728",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1421,
+      "ad_id": "927601d5a9d5e91a9e5e8f47",
+      "destination_url": "https://muruganphoto01.blogspot.com/2026/08/murugan.html?gad_source=5&gad_campaignid=24138486646",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1420,
+      "ad_id": "0fe595719dbd2eaa46081a40",
+      "destination_url": "https://photomurugan.website/?gad_source=5&gad_campaignid=24143508123",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1419,
+      "ad_id": "a9d33ca9328a61e5bdbc57db",
+      "destination_url": "https://deltasolutionss.shop/?gad_source=5&gad_campaignid=24160342261",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1418,
+      "ad_id": "f332ced2d2dcd734da2d1ed0",
+      "destination_url": "https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152422054",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1417,
+      "ad_id": "cc0e161090605094242787e9",
+      "destination_url": "https://www.googleapis.com/auth/googleplay",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1416,
+      "ad_id": "4116649ee81be2e408a5bed4",
+      "destination_url": "https://rrmediaproductions.store/?gad_source=5&gad_campaignid=24156412288",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1415,
+      "ad_id": "2e9e61caebf384d4b2d168e5",
+      "destination_url": "https://titanadx.store/?gad_source=5&gad_campaignid=24132040265",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1414,
+      "ad_id": "8e3ecf10ec2a695fae564681",
+      "destination_url": "https://titanadx.store/?gad_source=5&gad_campaignid=24132040265",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1413,
+      "ad_id": "e85167ac9caafdc008fd95fb",
+      "destination_url": "https://balajionline.site/?gad_source=5&gad_campaignid=24145032150",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1412,
+      "ad_id": "ef3fd0eb1a85b415f6d66467",
+      "destination_url": "https://balajionline.site/?gad_source=5&gad_campaignid=24145032150",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1411,
+      "ad_id": "5178c18764683b6f2785b44c",
+      "destination_url": "https://daawatrasoi.site/?gad_source=5&gad_campaignid=24154816763",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1410,
+      "ad_id": "2a1f521c61145028ea553d03",
+      "destination_url": "https://uniqueclothescollction002.blogspot.com/2026/08/home.html?gad_source=5&gad_campaignid=24148710436",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1409,
+      "ad_id": "f1aaac13445cc86b1618d882",
+      "destination_url": "https://my100.xyz/A1/?gad_source=5&gad_campaignid=24118199442",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1408,
+      "ad_id": "93eaa1d1375ec44301e26ba5",
+      "destination_url": "https://my100.xyz/A1/?gad_source=5&gad_campaignid=24118199442",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1407,
+      "ad_id": "895fa1dbfc3e283340776ffc",
+      "destination_url": "https://rockybookstore.lovable.app?gad_source=5&gad_campaignid=24155296448",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1406,
+      "ad_id": "68dd443f3798395865bc46ab",
+      "destination_url": "https://rolexrestaurant.lovable.app?gad_source=5&gad_campaignid=24151069910",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1405,
+      "ad_id": "0a8498bf23a6c00d0f69f552",
+      "destination_url": "https://my100.xyz/A1/?gad_source=5&gad_campaignid=24118199442",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1404,
+      "ad_id": "f771ca1907a6cd4ab7da0a9f",
+      "destination_url": "https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152422054",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1403,
+      "ad_id": "bd600e6282b620adefdfff02",
+      "destination_url": "https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1402,
+      "ad_id": "be8edecbee686bd3aacf5711",
+      "destination_url": "https://fairlinksolution.store/?gad_source=5&gad_campaignid=24152385763",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1400,
+      "ad_id": "4140b676c793d10d3051a1b9",
+      "destination_url": "https://muruganwebsolustion.shop/?gad_source=5&gad_campaignid=24124476378",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1399,
+      "ad_id": "207c1bed8942e5deb2cdfd9e",
+      "destination_url": "https://teal-donut-da0e92.netlify.app/?gad_source=5&gad_campaignid=24161661571",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1398,
+      "ad_id": "b8d654b9f1c5b5d7a069eb1d",
+      "destination_url": "https://1.mahadevagency.store/?gad_source=5&gad_campaignid=24149681756",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1397,
+      "ad_id": "a7072bfa3d25d9d3bd5567ce",
+      "destination_url": "https://dprestaurant.site/?gad_source=5&gad_campaignid=24155383193",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1396,
+      "ad_id": "5d3327585ca41616ff5ca50b",
+      "destination_url": "https://clickza.in/MG/mg05.html?gad_source=5&gad_campaignid=24155793107",
+      "country": [
+        "India"
+      ]
+    },
+    {
+      "id": 1395,
+      "ad_id": "7b7400ee0dfea8df4123d1b5",
+      "destination_url": "https://shivamarketingtoday.online/?gad_source=5&gad_campaignid=24148033656",
+      "country": [
+        "India"
+      ]
+    }
+  ],
+  "exe_time": 0.226
+}
