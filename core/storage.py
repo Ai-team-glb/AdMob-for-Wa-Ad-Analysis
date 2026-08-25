@@ -21,7 +21,7 @@ logger = logging.getLogger("admob_scraper")
 
 
 class Storage:
-    """Manages atomic JSON file storage for AdMod_Data.json."""
+    """Manages atomic JSON file storage for AdMob_Data.json."""
 
     def __init__(self, path: str = None):
         self.path = Path(path or config.OUTPUT_FILE)
@@ -58,7 +58,7 @@ class Storage:
         return max(ids) + 1 if ids else 1
 
     def get_record(self, ad_id: str) -> Optional[Dict[str, Any]]:
-        """Find an existing record by ad_id in AdMod_Data.json."""
+        """Find an existing record by ad_id in AdMob_Data.json."""
         target_id = str(ad_id).strip()
         if not target_id:
             return None
@@ -70,7 +70,7 @@ class Storage:
         return None
 
     def upsert_record(self, record: Dict[str, Any]) -> None:
-        """Upsert (insert or update) an ad record by ad_id in AdMod_Data.json.
+        """Upsert (insert or update) an ad record by ad_id in AdMob_Data.json.
         Preserves the original `created` timestamp if updating an existing record.
         """
         ad_id = str(record.get("ad_id", "")).strip()
@@ -133,7 +133,7 @@ class Storage:
     def _atomic_write(self) -> None:
         """Atomic write: write temp file -> validate JSON -> replace target file."""
         dir_ = self.path.parent
-        fd, tmp_path = tempfile.mkstemp(prefix=".tmp_admod_", dir=dir_, suffix=".json")
+        fd, tmp_path = tempfile.mkstemp(prefix=".tmp_admob_", dir=dir_, suffix=".json")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as f:
                 json.dump(self.records, f, indent=2, ensure_ascii=False)

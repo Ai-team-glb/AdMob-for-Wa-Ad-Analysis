@@ -71,7 +71,7 @@ def _resolve(env_key: str, default: Path) -> str:
 TARGET_URL_FILE = _resolve("TARGET_URL_FILE", BASE_DIR / "data" / "urls.json")
 ADS_CACHE_FILE = _resolve("ADS_CACHE_FILE", BASE_DIR / "data" / "ads.json")
 PROCESSED_ADS_FILE = _resolve("PROCESSED_ADS_FILE", BASE_DIR / "data" / "processed_ads.json")
-OUTPUT_FILE = _resolve("OUTPUT_FILE", BASE_DIR / "data" / "AdMod_Data.json")
+OUTPUT_FILE = _resolve("OUTPUT_FILE", BASE_DIR / "data" / "AdMob_Data.json")
 LOG_FILE = _resolve("LOG_FILE", BASE_DIR / "logs" / "scraper.log")
 
 # --- External API URLs from YAML or env --------------------------------------

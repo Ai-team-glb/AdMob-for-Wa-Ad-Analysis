@@ -39,7 +39,7 @@ Strictly adheres to **SRS 2.0 Specifications**:
                             Pydantic Validation
                                      │
                                      ▼
-                        Atomic Write to AdMod_Data.json
+                        Atomic Write to AdMob_Data.json
 ```
 
 ---
@@ -103,7 +103,7 @@ MAX_REDIRECTS=30
 HEADLESS=true
 
 TARGET_URL_FILE=data/urls.json
-OUTPUT_FILE=data/AdMod_Data.json
+OUTPUT_FILE=data/AdMob_Data.json
 LOG_FILE=logs/scraper.log
 
 # --- Bright Data ISP Proxy credentials ---
@@ -114,7 +114,7 @@ BRIGHTDATA_HOST=brd.superproxy.io
 BRIGHTDATA_PORT=44445
 ```
 
-> **Security Note**: Never commit `.env` to Git. Credentials are never written to `AdMod_Data.json` or logs.
+> **Security Note**: Never commit `.env` to Git. Credentials are never written to `AdMob_Data.json` or logs.
 
 ---
 
@@ -142,7 +142,7 @@ python main.py
 
 ### What Happens During Execution:
 1. Loads target URLs from `data/urls.json`.
-2. Inspects `data/AdMod_Data.json` to automatically skip URLs that were already completed in previous runs.
+2. Inspects `data/AdMob_Data.json` to automatically skip URLs that were already completed in previous runs.
 3. For each URL:
    - Randomly rotates through proxy countries from `config.PROXY_COUNTRIES` without repeating attempts.
    - Launches an isolated Playwright browser context configured with the country-specific ISP proxy.
@@ -151,7 +151,7 @@ python main.py
    - Inspects the destination page for publicly visible WhatsApp links (`wa.me`, `api.whatsapp.com`, `chat.whatsapp.com`) and deduplicates them.
    - Queries Bright Data's geo verification endpoint (`https://geo.brdtest.com/welcome.txt?product=isp&method=native`) to retrieve actual exit IP, ASN, and geo coordinates.
    - Loops until 10 unique successful geolocations are collected.
-   - Builds 1 `AdRecord` with 1 `add-id` and atomically commits the validated record to `data/AdMod_Data.json`.
+   - Builds 1 `AdRecord` with 1 `add-id` and atomically commits the validated record to `data/AdMob_Data.json`.
 
 ---
 
@@ -169,7 +169,7 @@ python test_integration.py
 
 ---
 
-## 7. Output Format (`data/AdMod_Data.json`)
+## 7. Output Format (`data/AdMob_Data.json`)
 
 The persisted output strictly matches the SRS 2.0 data schema:
 
