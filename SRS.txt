@@ -25,7 +25,7 @@ Find publicly accessible WhatsApp links on the destination page.
 Extract available WhatsApp URL information.
 Retrieve the actual proxy/IP geolocation.
 Aggregate all geolocation results into one advertisement record.
-Store the completed record in AdMod_Data.json.
+Store the completed record in AdMob_Data.json.
 Core data rule
 
 One target URL = one add-id.
@@ -628,7 +628,7 @@ It must not produce ten separate add-id values.
 
 The output file must remain:
 
-data/AdMod_Data.json
+data/AdMob_Data.json
 
 Recommended structure:
 
@@ -868,7 +868,7 @@ This prevents loss of previously completed URL records.
 
 To reduce JSON corruption:
 
-AdMod_Data.json
+AdMob_Data.json
       ↓
 Write temporary file
       ↓
@@ -1003,7 +1003,7 @@ Proxy credentials must:
 
 Be stored outside source code.
 Be stored in environment variables or a secret manager.
-Never be written to AdMod_Data.json.
+Never be written to AdMob_Data.json.
 Never be printed in logs.
 Never be committed to Git.
 
@@ -1033,7 +1033,7 @@ admob_scraper/
 │
 ├── data/
 │   ├── urls.json
-│   └── AdMod_Data.json
+│   └── AdMob_Data.json
 │
 ├── logs/
 │   └── scraper.log
@@ -1452,7 +1452,7 @@ The final system can be summarized as:
              Pydantic Validation
                     │
                     ▼
-             AdMod_Data.json
+             AdMob_Data.json
                     │
                     ▼
               NEXT TARGET URL

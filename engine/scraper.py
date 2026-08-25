@@ -69,6 +69,101 @@ async def _extract_contact_buttons(page) -> list[dict]:
     return result
 
 
+async def _check_page_error_or_404(page, response) -> Optional[str]:
+    """Inspect HTTP response status code and page DOM to detect 404, 4xx/5xx HTTP errors, or unfetchable pages."""
+    if response is not None:
+        status = response.status
+        if status in (404, 410):
+            return f"HTTP {status} Not Found"
+        if status in (403, 500, 502, 503, 504) or status >= 400:
+            return f"HTTP {status} Error"
+
+    try:
+        title = (await page.title()).lower()
+    except Exception:
+        title = ""
+
+    try:
+        content = (await page.content())[:4000].lower()
+    except Exception:
+        content = ""
+
+    error_signatures = (
+        "404. that's an error",
+        "requested url was not found on this server",
+        "404 - page not found",
+        "404 page not found",
+        "404 not found",
+        "page not found",
+        "site not found",
+        "domain not found",
+        "502 bad gateway",
+        "503 service unavailable",
+        "error 404",
+        "404 error",
+    )
+
+    for sig in error_signatures:
+        if sig in title or sig in content:
+            return f"404/Error signature ('{sig}')"
+
+    return None
+
+
+async def _prepare_page_for_screenshot(page) -> None:
+    """Scroll through page and trigger keyboard actions to ensure full rendering:
+    1. Scroll down 3 times incrementally to trigger lazy loading.
+    2. Press Keyboard 'End' to load bottom elements and lazy images.
+    3. Press Keyboard 'Home' to return to top.
+    4. Force load lazy images and wait for fonts/network to settle.
+    """
+    try:
+        logger.info("Preparing page rendering (scrolling & keyboard triggers)...")
+        # 1. Scroll 3 times down the page
+        for _ in range(3):
+            await page.evaluate("window.scrollBy(0, window.innerHeight)")
+            await page.wait_for_timeout(400)
+
+        # 2. Press Keyboard 'End' button to load bottom content
+        await page.keyboard.press("End")
+        await page.wait_for_timeout(800)
+
+        # 3. Press Keyboard 'Home' button to scroll back to top
+        await page.keyboard.press("Home")
+        await page.wait_for_timeout(400)
+
+        # 4. Force-eager lazy images & wait for fonts / rendering
+        await page.evaluate("""
+            async () => {
+                document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+                    img.removeAttribute('loading');
+                });
+                const images = Array.from(document.querySelectorAll('img'));
+                await Promise.all(images.map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.addEventListener('load', resolve, { once: true });
+                        img.addEventListener('error', resolve, { once: true });
+                    });
+                }));
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
+            }
+        """)
+
+        # Network idle wait fallback
+        try:
+            await page.wait_for_load_state("networkidle", timeout=3000)
+        except PlaywrightTimeoutError:
+            pass
+
+        # Allow layout re-flows and CSS animations/transitions to settle
+        await page.wait_for_timeout(1000)
+    except Exception as exc:
+        logger.warning("Error during page scroll/render preparation: %s", exc)
+
+
 async def execute_country_observation(
     browser_mgr: BrowserManager,
     target_url: str,
@@ -79,12 +174,14 @@ async def execute_country_observation(
     """Execute a single observation for a specific country proxy:
     1. Connect via Bright Data proxy for `country`
     2. Navigate to target URL & track redirects
-    3. Extract destination URL & campaign parameters
-    4. Extract WhatsApp links & details
-    5. Fetch actual exit IP geolocation from geo endpoint
-    6. Capture full rendered HTML
-    7. Take a screenshot
-    8. Extract phone numbers and contact buttons
+    3. Validate HTTP status and error signatures (abort if 404/unfetchable)
+    4. Extract destination URL & campaign parameters
+    5. Extract WhatsApp links & details
+    6. Fetch actual exit IP geolocation from geo endpoint
+    7. Prepare page rendering (scroll 3x, hit End, hit Home, settle assets)
+    8. Capture full rendered HTML & rendered text
+    9. Take a screenshot
+    10. Extract phone numbers and contact buttons
     Returns a dict containing the collected observation data.
     """
     proxy = ProxyManager.build_proxy_config(country)
@@ -105,8 +202,9 @@ async def execute_country_observation(
         tracker = RedirectTracker(page, target_url)
 
         logger.info("Navigation started: %s (proxy country=%s)", target_url, country.upper() if proxy else "DIRECT")
+        response = None
         try:
-            await page.goto(target_url, wait_until="domcontentloaded", timeout=12000 if proxy else config.PAGE_TIMEOUT)
+            response = await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
         except PlaywrightTimeoutError as exc:
             if proxy is not None:
                 logger.warning("Navigation timeout via proxy on %s. Attempting fallback via direct connection...", target_url)
@@ -129,15 +227,27 @@ async def execute_country_observation(
                 tracker = RedirectTracker(page, target_url)
                 logger.info("Navigation started (direct fallback): %s", target_url)
                 try:
-                    await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
+                    response = await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
                 except PlaywrightTimeoutError as exc2:
-                    logger.warning("Navigation timeout on direct fallback for %s", target_url)
-                    raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc2)
+                    if page.url and page.url != "about:blank":
+                        logger.warning("Navigation timed out on direct fallback, but page reached %s; continuing with partial content.", page.url)
+                    else:
+                        logger.warning("Navigation timeout on direct fallback for %s", target_url)
+                        raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc2)
             else:
-                logger.warning("Navigation timeout on %s for country %s", target_url, country.upper())
-                raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc)
+                if page.url and page.url != "about:blank":
+                    logger.warning("Navigation timed out on %s, but page reached %s; continuing with partial content.", target_url, page.url)
+                else:
+                    logger.warning("Navigation timeout on %s for country %s", target_url, country.upper())
+                    raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc)
 
         tracker.check_loop()
+
+        # --- Check for 404 / HTTP Error / Unfetchable URL ---
+        err_reason = await _check_page_error_or_404(page, response)
+        if err_reason:
+            logger.warning("Unfetchable / 404 URL detected (%s) for %s", err_reason, target_url)
+            raise ScraperException(ErrorType.DESTINATION_ERROR, f"URL cannot be fetched / 404 ({err_reason})")
 
         # Check for access challenge or CAPTCHA (SRS Section 35)
         content_snippet = ""
@@ -165,6 +275,9 @@ async def execute_country_observation(
         geo_data = await geo_service.fetch_geo_info(context)
         detected_country = geo_data.get("country") if geo_data else "unknown"
         logger.info("Geolocation detected: %s (requested: %s)", detected_country, country.upper())
+
+        # --- Execute scroll & keyboard triggers to fully render page before taking screenshot ---
+        await _prepare_page_for_screenshot(page)
 
         # --- Extended data collection for API pipeline ---
         # Full rendered HTML

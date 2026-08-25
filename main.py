@@ -87,7 +87,7 @@ def save_api_response_to_ads_json(response_obj: dict) -> None:
 
 
 def register_received_ad(ad: Dict[str, Any], storage: Storage) -> None:
-    """Register ad in AdMob_Data.json: status=0 if new, status=2 if repeat."""
+    """Register ad in AdMob_Data.json with status=0 if it does not exist yet."""
     ad_id = str(ad.get("ad_id") or ad.get("id") or "").strip()
     if not ad_id:
         return
@@ -96,19 +96,12 @@ def register_received_ad(ad: Dict[str, Any], storage: Storage) -> None:
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     existing = storage.get_record(ad_id)
-    if existing:
-        # Same ad_id received again -> status = 2 (repeat)
-        if existing.get("status") != 2:
-            record = dict(existing)
-            record["status"] = 2
-            record["updated"] = now_iso
-            storage.upsert_record(record)
-    else:
-        # New ad received -> status = 0 (fresh)
+    if not existing:
+        # New ad received -> status = 0 (fresh, pending scrape)
         country_iso = [normalize_country_code(c).upper() for c in countries] if countries else ["IN"]
         record = {
             "ad_id": ad_id,
-            "status": 0,  # 0 = fresh
+            "status": 0,  # 0 = fresh (unscraped)
             "platform": "12",
             "destinations": dest,
             "html_path": "",
@@ -172,8 +165,6 @@ def load_ads_from_cache(storage: Storage) -> List[Dict[str, Any]]:
 
 async def fetch_and_store_api_ads(storage: Storage) -> List[Dict[str, Any]]:
     """Hit GET API, save full response to data/ads.json, and return unscraped ads."""
-    from api import admob_api
-
     endpoint = config.DEV_GET_API or config.ADMOB_GET_ADS_ENDPOINT
     url = admob_api._url(endpoint)
     logger.info("[GET Stage] Hitting GET API: %s", url)
@@ -313,4 +304,7 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        logger.info("Pipeline execution stopped gracefully by user.")
