@@ -91,7 +91,6 @@ class AdMobDataRecord(BaseModel):
     country_iso: List[str] = Field(default_factory=list)
     outgoing_url: List[Dict[str, Any]] = Field(default_factory=list)
     redirects: List[str] = Field(default_factory=list)
-    source_app: str = "crex"
     whatsapp: List[WhatsAppItem] = Field(default_factory=list)
     campaign_id: str = ""
     created: str
