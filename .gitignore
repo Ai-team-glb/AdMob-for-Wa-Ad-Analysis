@@ -6,3 +6,5 @@ venv/
 logs/*.log
 data/AdMod_Data.json
 .tmp_admod_*.json
+data/
+logs/
