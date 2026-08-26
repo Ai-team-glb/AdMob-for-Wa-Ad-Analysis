@@ -112,7 +112,6 @@ def register_received_ad(ad: Dict[str, Any], storage: Storage) -> None:
             "country_iso": country_iso,
             "outgoing_url": [],
             "redirects": [],
-            "source_app": str(ad.get("source_app") or ad.get("app_name") or "crex"),
             "whatsapp": [],
             "campaign_id": str(ad.get("campaign_id") or ""),
             "created": now_iso,
@@ -219,8 +218,8 @@ async def run_ads_scraping_pipeline(
     proxy_mgr: ProxyManager
 ) -> None:
     """Scrape and process API ad objects through full pipeline."""
-    target_ads = ads[:config.MAX_ADS_PER_CYCLE] if config.MAX_ADS_PER_CYCLE > 0 else ads
-    logger.info("Scraping %d ad(s) (MAX_ADS_PER_CYCLE=%d)...", len(target_ads), config.MAX_ADS_PER_CYCLE)
+    target_ads = ads
+    logger.info("Scraping %d ad(s) from current GET response batch...", len(target_ads))
 
     scraping_mgr = ScrapingManager(browser_mgr, storage, proxy_mgr)
     success_count = 0
@@ -235,19 +234,21 @@ async def run_ads_scraping_pipeline(
             ok = await scraping_mgr.process_api_ad(ad)
             if ok:
                 success_count += 1
-                if ad_id != "?":
-                    mark_ad_id_processed(ad_id)
             else:
                 fail_count += 1
+            if ad_id != "?":
+                mark_ad_id_processed(ad_id)
         except Exception as exc:
             # Stage failure logging per ad
             logger.error("[PIPELINE Error] Failed processing ad_id=%s destination=%s: %s", ad_id, dest, exc, exc_info=True)
             fail_count += 1
+            if ad_id != "?":
+                mark_ad_id_processed(ad_id)
             continue
 
-        if idx < len(target_ads) and config.TIME_GAP_IN_INSTANCES > 0:
-            logger.info("Waiting %.1fs gap before next ad instance...", config.TIME_GAP_IN_INSTANCES)
-            await asyncio.sleep(config.TIME_GAP_IN_INSTANCES)
+        if idx < len(target_ads):
+            logger.info("Waiting 5.0s gap before next ad instance...", )
+            await asyncio.sleep(5.0)
 
     logger.info("API Ads pipeline finished: %d succeeded, %d failed out of %d ad(s)",
                 success_count, fail_count, len(target_ads))
@@ -279,7 +280,7 @@ async def main() -> None:
             ads_to_process: List[Dict[str, Any]] = []
 
             if config.HIT_GET_API:
-                logger.info("[HIT_GET_API=true] Directly calling GET API...")
+                logger.info("[HIT_GET_API=true] Hitting GET API for new batch...")
                 ads_to_process = await fetch_and_store_api_ads(storage)
             else:
                 logger.info("[HIT_GET_API=false] Checking local cache file %s...", config.ADS_CACHE_FILE)
@@ -292,15 +293,12 @@ async def main() -> None:
                     ads_to_process = await fetch_and_store_api_ads(storage)
 
             if ads_to_process:
-                logger.info("Processing %d ad(s) in cycle #%d...", len(ads_to_process), cycle)
+                logger.info("Processing %d ad(s) in batch for cycle #%d...", len(ads_to_process), cycle)
                 await run_ads_scraping_pipeline(ads_to_process, browser_mgr, storage, proxy_mgr)
+                logger.info("Batch for cycle #%d COMPLETE. Moving immediately to next GET API cycle...", cycle)
             else:
-                logger.info("No ads available to process in cycle #%d.", cycle)
-
-            # Continuous retry / polling gap
-            gap = max(config.TIME_GAP_IN_INSTANCES, 5.0)
-            logger.info("[NO DATA / CYCLE END] Waiting %.1f seconds before next GET API / cycle attempt...", gap)
-            await asyncio.sleep(gap)
+                logger.info("No new/eligible ads returned in cycle #%d. Waiting 30 seconds before next GET API attempt...", cycle)
+                await asyncio.sleep(30.0)
 
 
 if __name__ == "__main__":

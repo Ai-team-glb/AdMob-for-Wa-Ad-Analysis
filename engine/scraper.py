@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 import config
 from services import geo_service
@@ -205,41 +205,49 @@ async def execute_country_observation(
         response = None
         try:
             response = await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
-        except PlaywrightTimeoutError as exc:
-            if proxy is not None:
-                logger.warning("Navigation timeout via proxy on %s. Attempting fallback via direct connection...", target_url)
-                try:
-                    await context.close()
-                except Exception:
-                    pass
-                try:
-                    await browser.close()
-                except Exception:
-                    pass
+        except (PlaywrightTimeoutError, PlaywrightError) as exc:
+            if isinstance(exc, PlaywrightTimeoutError):
+                if proxy is not None:
+                    logger.warning("Navigation timeout via proxy on %s. Attempting fallback via direct connection...", target_url)
+                    try:
+                        await context.close()
+                    except Exception:
+                        pass
+                    try:
+                        await browser.close()
+                    except Exception:
+                        pass
 
-                proxy = None
-                browser, context = await browser_mgr.new_context(None)
-                await context.route(
-                    "**/{googletagmanager,google-analytics,doubleclick,googlesyndication,facebook,analytics}/**",
-                    lambda route: route.abort()
-                )
-                page = await context.new_page()
-                tracker = RedirectTracker(page, target_url)
-                logger.info("Navigation started (direct fallback): %s", target_url)
-                try:
-                    response = await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
-                except PlaywrightTimeoutError as exc2:
-                    if page.url and page.url != "about:blank":
-                        logger.warning("Navigation timed out on direct fallback, but page reached %s; continuing with partial content.", page.url)
-                    else:
-                        logger.warning("Navigation timeout on direct fallback for %s", target_url)
-                        raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc2)
-            else:
-                if page.url and page.url != "about:blank":
-                    logger.warning("Navigation timed out on %s, but page reached %s; continuing with partial content.", target_url, page.url)
+                    proxy = None
+                    browser, context = await browser_mgr.new_context(None)
+                    await context.route(
+                        "**/{googletagmanager,google-analytics,doubleclick,googlesyndication,facebook,analytics}/**",
+                        lambda route: route.abort()
+                    )
+                    page = await context.new_page()
+                    tracker = RedirectTracker(page, target_url)
+                    logger.info("Navigation started (direct fallback): %s", target_url)
+                    try:
+                        response = await page.goto(target_url, wait_until="domcontentloaded", timeout=config.PAGE_TIMEOUT)
+                    except Exception as exc2:
+                        if page.url and page.url != "about:blank":
+                            logger.warning("Navigation exception on direct fallback, but page reached %s; continuing with partial content.", page.url)
+                        else:
+                            logger.warning("Navigation error on direct fallback for %s: %s", target_url, exc2)
+                            raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, f"Navigation failed ({exc2})", exc2)
                 else:
-                    logger.warning("Navigation timeout on %s for country %s", target_url, country.upper())
-                    raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc)
+                    if page.url and page.url != "about:blank":
+                        logger.warning("Navigation timed out on %s, but page reached %s; continuing with partial content.", target_url, page.url)
+                    else:
+                        logger.warning("Navigation timeout on %s for country %s", target_url, country.upper())
+                        raise ScraperException(ErrorType.NAVIGATION_TIMEOUT, "Navigation timed out", exc)
+            else:
+                # PlaywrightError (e.g. net::ERR_ABORTED, frame detached)
+                if page.url and page.url != "about:blank":
+                    logger.warning("Navigation aborted/detached on %s (%s), but page reached %s; continuing with partial content.", target_url, exc, page.url)
+                else:
+                    logger.warning("Navigation aborted on %s for country %s: %s", target_url, country.upper(), exc)
+                    raise ScraperException(ErrorType.DESTINATION_ERROR, f"Navigation aborted ({exc})", exc)
 
         tracker.check_loop()
 
@@ -348,6 +356,11 @@ async def execute_country_observation(
         logger.debug("[%s] Country observation exception (%s): %s", err_type.value, country.upper(), exc)
         raise
     finally:
+        try:
+            if 'page' in locals() and not page.is_closed():
+                await page.close()
+        except Exception:
+            pass
         try:
             await context.close()
         except Exception:
