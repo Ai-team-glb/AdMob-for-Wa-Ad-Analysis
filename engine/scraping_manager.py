@@ -581,6 +581,23 @@ class ScrapingManager:
             "updated": updated_iso,
         }
 
+        # --- POST OWNER OCR EXTRACTION (isolated sub-flow) ---
+        try:
+            from post_owner.ocr_client import extract_post_owner
+            po_screenshot = best_obs.get("post_owner_screenshot_path")
+            if po_screenshot:
+                post_owner_name = await extract_post_owner(po_screenshot, ad_id)
+                if post_owner_name:
+                    insert_data["post_owner"] = post_owner_name
+                    admob_data_record["post_owner"] = post_owner_name
+                    logger.info("[PostOwner] Added post_owner='%s' to payloads for ad_id=%s", post_owner_name, ad_id)
+                else:
+                    logger.info("[PostOwner] No post_owner extracted for ad_id=%s; field omitted", ad_id)
+            else:
+                logger.info("[PostOwner] No OCR screenshot available for ad_id=%s; skipping", ad_id)
+        except Exception as exc:
+            logger.warning("[PostOwner] OCR sub-flow failed for ad_id=%s (non-fatal): %s", ad_id, exc)
+
         # --- Pydantic Validation & Local Persistence in data/AdMob_Data.json ---
         try:
             validated_model = AdMobDataRecord.model_validate(admob_data_record)
