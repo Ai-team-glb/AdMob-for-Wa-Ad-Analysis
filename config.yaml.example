@@ -8,6 +8,11 @@ default_settings:
 
 network:
   admob:
-    DEV_GET_API: ""
-    DEV_S3_API: ""
-    DEV_INSERT_API: ""
+    dev:
+      GET_API: ""
+      S3_API: ""
+      INSERT_API: ""
+    prod:
+      GET_API: ""
+      S3_API: ""
+      INSERT_API: ""
