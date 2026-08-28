@@ -87,6 +87,11 @@ ADMOB_INSERT_ENDPOINT = os.getenv("ADMOB_INSERT_ENDPOINT", "/api/v1/admob/lander
 ADMOB_API_TIMEOUT = int(os.getenv("ADMOB_API_TIMEOUT", 60))  # seconds
 ADMOB_CRAWLED_BY = os.getenv("ADMOB_CRAWLED_BY", ".net")
 
+# --- Post Owner OCR API --------------------------------------------------------
+POST_OWNER_OCR_URL = os.getenv("POST_OWNER_OCR_URL", "https://admob-ocr-dev.poweradspy.ai/extract?ocr=false")
+POST_OWNER_OCR_API_KEY = os.getenv("ADMOB_OCR_API_KEY") or os.getenv("POST_OWNER_OCR_API_KEY", "")
+POST_OWNER_SCREENSHOT_DIR = _resolve("POST_OWNER_SCREENSHOT_DIR", BASE_DIR / "post_owner" / "screenshots")
+
 # --- Screenshot / temp files ----------------------------------------------------------
 SCREENSHOT_DIR = _resolve("SCREENSHOT_DIR", BASE_DIR / "data" / "screenshots")
 

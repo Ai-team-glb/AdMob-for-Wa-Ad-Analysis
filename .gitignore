@@ -8,3 +8,5 @@ data/AdMod_Data.json
 .tmp_admod_*.json
 data/
 logs/
+post_owner/screenshots/
+post_owner/__pycache__/

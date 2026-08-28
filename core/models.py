@@ -92,6 +92,7 @@ class AdMobDataRecord(BaseModel):
     outgoing_url: List[Dict[str, Any]] = Field(default_factory=list)
     redirects: List[str] = Field(default_factory=list)
     whatsapp: List[WhatsAppItem] = Field(default_factory=list)
+    post_owner: Optional[str] = None
     campaign_id: str = ""
     created: str
     updated: str

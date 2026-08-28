@@ -329,6 +329,37 @@ async def execute_country_observation(
             except Exception as exc:
                 logger.warning("Failed to take screenshot: %s", exc)
 
+        # Post-owner OCR screenshot (small upper portion only — separate from full-page screenshot)
+        post_owner_screenshot_path: Optional[str] = None
+        if ad_id_for_screenshot:
+            try:
+                po_dir = Path(config.POST_OWNER_SCREENSHOT_DIR)
+                po_dir.mkdir(parents=True, exist_ok=True)
+                po_file = po_dir / f"{ad_id_for_screenshot}.webp"
+
+                # Capture only the top 800px of the viewport (header / branding area)
+                viewport = page.viewport_size or {"width": 1280, "height": 720}
+                clip_height = min(800, viewport.get("height", 720))
+                await page.screenshot(
+                    path=str(po_file),
+                    clip={"x": 0, "y": 0, "width": viewport["width"], "height": clip_height},
+                    type="png",
+                )
+                # Convert to webp if possible, otherwise keep as-is
+                try:
+                    from PIL import Image
+                    img = Image.open(str(po_file))
+                    img.save(str(po_file), format="WEBP", quality=85)
+                except ImportError:
+                    pass  # Pillow not installed; file stays as PNG with .webp extension
+                except Exception:
+                    pass  # Conversion failed; file is still usable
+
+                post_owner_screenshot_path = str(po_file)
+                logger.info("[PostOwner] Upper screenshot saved: %s", po_file.name)
+            except Exception as exc:
+                logger.warning("[PostOwner] Failed to take upper screenshot: %s", exc)
+
         # Phone numbers
         phone_numbers = await _extract_phone_numbers(page)
         logger.info("Phone numbers found: %d", len(phone_numbers))
@@ -347,6 +378,7 @@ async def execute_country_observation(
             "rendered_html": rendered_html,
             "rendered_text": rendered_text,
             "screenshot_path": screenshot_path,
+            "post_owner_screenshot_path": post_owner_screenshot_path,
             "phone_numbers": phone_numbers,
             "contact_buttons": contact_buttons,
         }
