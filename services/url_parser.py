@@ -29,16 +29,6 @@ def extract_campaign_params(url: str) -> dict:
     return result
 
 
-def extract_source_website(url: str) -> str:
-    """Extract the domain/netloc from a URL (for the source_website field)."""
-    if not url:
-        return ""
-    try:
-        return urlparse(url).netloc
-    except Exception:
-        return ""
-
-
 def extract_source_params(url: str) -> dict:
     """Extract ALL query parameters from a URL as a flat dict (for source_parameters)."""
     if not url:

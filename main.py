@@ -7,31 +7,28 @@ Config-driven automated pipeline:
 - Tracks processed ad_ids in data/processed_ads.json
 - Runs continuously with TIME_GAP_IN_INSTANCES polling delay when no ads are available
 """
+import asyncio
+import json
+import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any, Dict, List
 
 # Ensure package root is in sys.path
 BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-import asyncio
-import json
-import logging
-import os
-import tempfile
-from typing import List, Dict, Any, Tuple, Optional
-from datetime import datetime, timezone
-
 import aiohttp
 
 import config
-from core.logger import setup_logger
+from api import admob_api
+from core.logger import log_insert_transaction, setup_logger
 from core.storage import Storage
+from engine.scraping_manager import ScrapingManager
 from services.browser_manager import BrowserManager
 from services.proxy_manager import ProxyManager, normalize_country_code
-from engine.scraping_manager import ScrapingManager
-from api import admob_api
 
 logger = setup_logger()
 
@@ -174,7 +171,6 @@ async def fetch_and_store_api_ads(storage: Storage) -> List[Dict[str, Any]]:
             async with session.get(url, headers=admob_api.ADMOB_GET_HEADERS) as resp:
                 status = resp.status
                 body = await resp.text()
-
                 if status != 200:
                     logger.error("[GET Stage] GET ads returned HTTP %d: %s", status, body[:500])
                     return []
@@ -242,6 +238,23 @@ async def run_ads_scraping_pipeline(
             # Stage failure logging per ad
             logger.error("[PIPELINE Error] Failed processing ad_id=%s destination=%s: %s", ad_id, dest, exc, exc_info=True)
             fail_count += 1
+            try:
+                log_insert_transaction(
+                    ad_data=ad,
+                    insert_data={
+                        "ad_id": str(ad_id),
+                        "status": 3,
+                        "destinations": dest,
+                    },
+                    api_response={
+                        "status": "failed",
+                        "error": True,
+                        "message": f"Pipeline processing failed: {exc}",
+                        "reason": exc.__class__.__name__
+                    }
+                )
+            except Exception:
+                pass
             if ad_id != "?":
                 mark_ad_id_processed(ad_id)
             continue

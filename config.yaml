@@ -2,12 +2,17 @@ default_settings:
   INSTANCES: 10
   TIME_GAP_IN_INSTANCES: 30
   DEV_MODE: true
-  HIT_GET_API: true
+  HIT_GET_API: false
   BRIGHT_PROXIES: true
-  HEADLESS: true
+  Headless: true
 
 network:
   admob:
-    DEV_GET_API: ""
-    DEV_UPLOAD_API: ""
-    DEV_INSERT_API: ""
+    dev:
+      GET_API: /api/v1/admob/landers/get_ads
+      S3_API: /api/v1/admob/landers/upload
+      INSERT_API: /api/v1/admob/landers/insert
+    prod:
+      GET_API: /api/v1/admob/landers/get_ads
+      S3_API: /api/v1/admob/landers/upload
+      INSERT_API: /api/v1/admob/landers/insert

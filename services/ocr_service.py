@@ -1,11 +1,11 @@
-"""OCR client for extracting post-owner name from lander screenshots.
+"""OCR service for extracting post-owner name from lander screenshots.
 
 Sends a small upper-portion screenshot to the external OCR API and returns
-the extracted post_owner_name.  Fully isolated — failures never crash the
+the extracted post_owner_name. Fully isolated — failures never crash the
 main AdMob scraper pipeline.
 """
 from __future__ import annotations
-
+import json
 import logging
 from pathlib import Path
 from typing import Optional
@@ -58,7 +58,6 @@ async def extract_post_owner(screenshot_path: str, ad_id: str) -> Optional[str]:
             async with session.post(ocr_url, headers=headers, data=data) as resp:
                 status = resp.status
                 body = await resp.text()
-
                 if status != 200:
                     logger.warning(
                         "[PostOwner] OCR API returned HTTP %d for ad_id=%s: %s",
@@ -66,7 +65,6 @@ async def extract_post_owner(screenshot_path: str, ad_id: str) -> Optional[str]:
                     )
                     return None
 
-                import json
                 try:
                     result = json.loads(body)
                 except json.JSONDecodeError:
