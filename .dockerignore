@@ -1,0 +1,46 @@
+# Git and VCS
+.git
+.gitignore
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Byte-compiled / cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local Environment Secrets (pass via docker run --env-file .env or secrets manager)
+.env
+*.env
+*.local
+config.yaml
+
+# Runtime Logs
+logs/*
+!logs/.gitkeep
+
+# Runtime Data and Screenshots (should be volume-mounted if persistence is desired)
+data/screenshots/*
+!data/screenshots/.gitkeep
+data/*.tmp*
+data/
+
+# Editor / IDE configuration
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation and Specifications
+README.md
+SRS.txt
+MD/
+
+# Docker build files
+Dockerfile
+.dockerignore
