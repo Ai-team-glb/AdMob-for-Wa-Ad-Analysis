@@ -2,12 +2,9 @@
 Aligns with SRS Section 32 (Error Handling Architecture).
 """
 from __future__ import annotations
-import logging
 from enum import Enum
 from typing import Optional
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
-
-logger = logging.getLogger("admob_scraper")
 
 
 class ErrorType(str, Enum):

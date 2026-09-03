@@ -6,6 +6,7 @@ Endpoints handled:
     POST /api/v1/admob/landers/insert_html_content      (JSON)
 """
 from __future__ import annotations
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -53,7 +54,6 @@ async def get_ads() -> List[Dict[str, Any]]:
         async with session.get(url, headers=ADMOB_GET_HEADERS) as resp:
             status = resp.status
             body = await resp.text()
-
             if status != 200:
                 logger.error("GET ads HTTP %d: %s", status, body[:500])
                 raise ScraperException(ErrorType.API_SERVER_ERROR,
@@ -134,7 +134,6 @@ async def upload_media(
         async with session.post(url, data=data) as resp:
             resp_status = resp.status
             body = await resp.text()
-
             # 404 — no file provided (permanent, do not retry)
             if resp_status == 404:
                 logger.error("Upload 404 for ad_id=%s: %s", ad_id, body[:500])
@@ -201,18 +200,16 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
                 async with session.post(url, json=payload) as resp:
                     resp_status = resp.status
                     body = await resp.text()
-
                     # ---- 422 Validation Error — do NOT retry ----
                     if resp_status == 422:
                         try:
                             err_payload = json.loads(body)
                         except json.JSONDecodeError:
-                            err_payload = {"raw": body[:500]}
+                            err_payload = {"code": 422, "status": "error", "message": body[:500]}
                         logger.error(
                             "Insert REJECTED (422) for ad_id=%s: message=%s",
                             ad_id, err_payload.get("message", body[:200]),
                         )
-                        # Log each validation error from the errors array
                         for err_item in err_payload.get("errors", []):
                             logger.error(
                                 "  Validation error: field=%s reason=%s message=%s",
@@ -220,12 +217,20 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
                                 err_item.get("reason", "?"),
                                 err_item.get("message", "?"),
                             )
-                        raise PermanentError(f"Insert validation failed (422) for ad_id={ad_id}")
+                        exc = PermanentError(f"Insert validation failed (422) for ad_id={ad_id}")
+                        exc.api_response = err_payload
+                        raise exc
 
                     # ---- 400 Bad Request — do NOT retry ----
                     if resp_status == 400:
                         logger.error("Insert BAD REQUEST (400) for ad_id=%s: %s", ad_id, body[:500])
-                        raise PermanentError(f"Insert bad request (400) for ad_id={ad_id}")
+                        try:
+                            err_payload = json.loads(body)
+                        except json.JSONDecodeError:
+                            err_payload = {"code": 400, "status": "error", "message": body[:500]}
+                        exc = PermanentError(f"Insert bad request (400) for ad_id={ad_id}")
+                        exc.api_response = err_payload
+                        raise exc
 
                     # ---- 503 Service Unavailable — retry ----
                     if resp_status == 503:
@@ -233,10 +238,12 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
                             "Insert SERVICE UNAVAILABLE (503) for ad_id=%s (attempt %d/%d): %s",
                             ad_id, attempt, config.MAX_RETRIES, body[:200],
                         )
-                        last_exc = ScraperException(ErrorType.API_SERVER_ERROR,
-                                                    f"503 from insert endpoint: {body[:200]}")
+                        try:
+                            err_payload = json.loads(body)
+                        except json.JSONDecodeError:
+                            err_payload = {"code": 503, "status": "error", "message": body[:200]}
+                        last_exc.api_response = err_payload
                         if attempt < config.MAX_RETRIES:
-                            import asyncio
                             await asyncio.sleep(config.RETRY_BACKOFF_SECONDS * attempt)
                             continue
                         raise last_exc
@@ -247,21 +254,27 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
                             "Insert SERVER ERROR (500) for ad_id=%s endpoint=%s body=%s",
                             ad_id, url, body[:500],
                         )
-                        raise ScraperException(ErrorType.API_SERVER_ERROR,
-                                               f"500 from insert endpoint for ad_id={ad_id}")
+                        try:
+                            err_payload = json.loads(body)
+                        except json.JSONDecodeError:
+                            err_payload = {"code": 500, "status": "error", "message": body[:500]}
+                        exc = ScraperException(ErrorType.API_SERVER_ERROR,
+                                                f"500 from insert endpoint for ad_id={ad_id}")
+                        exc.api_response = err_payload
+                        raise exc
 
                     # ---- Other non-200 ----
                     if resp_status not in (200, 207):
                         logger.error("Insert HTTP %d for ad_id=%s: %s", resp_status, ad_id, body[:500])
                         raise ScraperException(ErrorType.API_SERVER_ERROR,
-                                               f"Insert returned HTTP {resp_status}")
+                                                f"Insert returned HTTP {resp_status}")
 
                     # ---- Success (200 or 207) ----
                     try:
                         result = json.loads(body)
                     except json.JSONDecodeError:
                         raise ScraperException(ErrorType.API_SERVER_ERROR,
-                                               "Invalid JSON from insert response")
+                                                "Invalid JSON from insert response")
 
                     # 207 partial success — log each item
                     if resp_status == 207:
@@ -292,7 +305,6 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
             logger.warning("Insert transient error for ad_id=%s (attempt %d/%d): %s",
                           ad_id, attempt, config.MAX_RETRIES, exc)
             if attempt < config.MAX_RETRIES:
-                import asyncio
                 await asyncio.sleep(config.RETRY_BACKOFF_SECONDS * attempt)
                 continue
             raise ScraperException(ErrorType.API_CONNECTION_ERROR,

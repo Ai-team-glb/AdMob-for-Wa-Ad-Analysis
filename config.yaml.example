@@ -9,10 +9,10 @@ default_settings:
 network:
   admob:
     dev:
-      GET_API: ""
-      S3_API: ""
-      INSERT_API: ""
+      GET_API: get_api_endpoint_for_get_ads
+      S3_API: post_api_endpoint_for_post_screensorts
+      INSERT_API: post_api_endpoint_for_post_payload
     prod:
-      GET_API: ""
-      S3_API: ""
-      INSERT_API: ""
+      GET_API: get_api_endpoint_for_get_ads
+      S3_API: post_api_endpoint_for_post_screensorts
+      INSERT_API: post_api_endpoint_for_post_payload

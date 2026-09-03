@@ -11,9 +11,11 @@ from __future__ import annotations
 import json
 import logging
 import os
+import shutil
 import tempfile
+import time
 from pathlib import Path
-from typing import Optional, Set, List, Dict, Any
+from typing import Any, Dict, List, Optional, Set
 
 import config
 
@@ -147,11 +149,9 @@ class Storage:
                     replaced = True
                     break
                 except PermissionError:
-                    import time
                     time.sleep(0.1)
 
             if not replaced:
-                import shutil
                 shutil.copyfile(tmp_path, self.path)
                 try:
                     os.remove(tmp_path)

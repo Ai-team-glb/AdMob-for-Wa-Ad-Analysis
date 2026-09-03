@@ -5,24 +5,25 @@ Aligns with SRS Sections 1, 4, 7, 8, 9, 10, 27, 28, 33, 34, 48, 49.
 """
 from __future__ import annotations
 import asyncio
+import json
 import logging
-import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
-import json
 import config
 from api import admob_api
-from services import url_parser
+from core.logger import log_insert_transaction
+from core.models import AdMobDataRecord, AdRecord, GeoData, WhatsAppData
+from core.storage import Storage
+from engine.scraper import execute_country_observation
 from pydantic import ValidationError
+from services import url_parser
 from services.browser_manager import BrowserManager
 from services.html_packager import create_html_zip
-from core.models import AdRecord, WhatsAppData, GeoData, AdMobDataRecord
+from services.ocr_service import extract_post_owner
 from services.proxy_manager import ProxyManager, normalize_country_code
-from engine.scraper import execute_country_observation
-from core.storage import Storage
 
 logger = logging.getLogger("admob_scraper")
 
@@ -219,6 +220,7 @@ class ScrapingManager:
             "outgoing_url": [],
             "redirects": [],
             "whatsapp": [],
+            "post_owner": None,
             "campaign_id": str(ad_data.get("campaign_id") or ""),
             "created": created_timestamp,
             "updated": now_iso,
@@ -341,26 +343,44 @@ class ScrapingManager:
                 "country_iso": [normalize_country_code(c).upper() for c in countries] if countries else [primary_country_iso],
                 "outgoing_url": [],
                 "redirects": [],
-                "ad_category": None,
-                "source_website": destination_url,
-                "source_parameters": url_parser.extract_source_params(destination_url),
-                "whatsapp": {},
+                "whatsapp": [],
                 "campaign_id": str(ad_data.get("campaign_id") or ""),
-                "location": {},
-                "comparison": {},
-                "whatsapp_links": [],
-                "whatsapp_texts": [],
-                "phone_numbers": [],
-                "contact_buttons": [],
-                "whatsapp_rotator_detected": False,
-                "whatsapp_rotator_phone_count": 0,
-                "lead_campaign_tag": "",
+                "post_owner": None,
+                "created": created_timestamp,
+                "updated": updated_iso,
             }
             try:
-                await admob_api.insert_lander(ad_id, failed_insert_payload)
+                result = await admob_api.insert_lander(ad_id, failed_insert_payload)
                 logger.info("Reported status=3 unfetchable/404 URL to API for ad_id=%s", ad_id)
+                try:
+                    log_insert_transaction(
+                        ad_data=ad_data,
+                        insert_data=failed_insert_payload,
+                        api_response={
+                            "status": "failed",
+                            "error": True,
+                            "message": "Destination URL failed to load",
+                            "reason": "Navigation timeout or URL unfetchable"
+                        }
+                    )
+                except Exception as _log_exc:
+                    logger.warning("[JSONL Logging] Non-fatal error writing transaction log for ad_id=%s: %s", ad_id, _log_exc)
             except Exception as exc:
                 logger.error("Failed to report status=3 unfetchable URL to API for ad_id=%s: %s", ad_id, exc)
+                api_resp = getattr(exc, "api_response", None)
+                try:
+                    log_insert_transaction(
+                        ad_data=ad_data,
+                        insert_data=failed_insert_payload,
+                        api_response=api_resp if api_resp else {
+                            "status": "failed",
+                            "error": True,
+                            "message": "Destination URL failed to load",
+                            "reason": str(exc)
+                        }
+                    )
+                except Exception as _log_exc:
+                    logger.warning("[JSONL Logging] Non-fatal error writing transaction log for ad_id=%s: %s", ad_id, _log_exc)
 
             return False
 
@@ -463,7 +483,7 @@ class ScrapingManager:
                         "first_detected": now_iso,
                         "last_detected": now_iso,
                         "state": primary_country_iso,
-                        "city": primary_country_iso,
+                        "city": "",
                         "countrty": primary_country_iso,
                     })
                 except Exception:
@@ -529,42 +549,11 @@ class ScrapingManager:
         # Visible text content for html_content
         rendered_text = best_obs.get("rendered_text", "")
 
-        # --- Build the insertData payload for existing DB/API posting ---
-        insert_data: Dict[str, Any] = {
-            "ad_id": str(ad_id),
-            "status": 2,
-            "platform": str(ad_data.get("platform") or "12"),
-            "crawled_by": config.ADMOB_CRAWLED_BY,
-            "destinations": dest_url,
-            "html_path": html_path_remote,
-            "screen_shot": image_path_remote,
-            "html_content": rendered_text,
-            "domain_registered_date": ad_data.get("domain_registered_date"),
-            "domain_age": int(ad_data.get("domain_age") or 0),
-            "country_iso": country_iso,
-            "outgoing_url": outgoing_url,
-            "redirects": redirects,
-            "ad_category": None,
-            "source_website": source_website,
-            "source_parameters": source_parameters,
-            "whatsapp": whatsapp_info,
-            "campaign_id": campaign_id,
-            "location": location,
-            "comparison": comparison,
-            "whatsapp_links": all_whatsapp_links,
-            "whatsapp_texts": whatsapp_texts,
-            "phone_numbers": all_phone_numbers,
-            "contact_buttons": all_contact_buttons,
-            "whatsapp_rotator_detected": whatsapp_rotator_detected,
-            "whatsapp_rotator_phone_count": whatsapp_rotator_phone_count,
-            "lead_campaign_tag": "",
-        }
-
-        # --- Build NEW AdMob_Data.json record format ---
+        # --- Build the canonical AdMob payload (single source of truth) ---
         updated_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         admob_data_record: Dict[str, Any] = {
             "ad_id": str(ad_id),
-            "status": 2,  # 2 = repeat / completed
+            "status": 2,
             "platform": str(ad_data.get("platform", "12")),
             "destinations": dest_url,
             "html_path": html_path_remote,
@@ -573,26 +562,25 @@ class ScrapingManager:
             "domain_registered_date": ad_data.get("domain_registered_date"),
             "domain_age": int(ad_data.get("domain_age") or 0),
             "country_iso": country_iso,
-            "outgoing_url": [],
+            "outgoing_url": [],  # always empty — field kept in schema but not populated
             "redirects": redirects,
             "whatsapp": whatsapp_list,
+            "post_owner": None,
             "campaign_id": campaign_id,
             "created": created_timestamp,
             "updated": updated_iso,
         }
 
-        # --- POST OWNER OCR EXTRACTION (isolated sub-flow) ---
+        # --- POST OWNER OCR EXTRACTION (inlined, no separate package import needed) ---
         try:
-            from post_owner.ocr_client import extract_post_owner
             po_screenshot = best_obs.get("post_owner_screenshot_path")
             if po_screenshot:
                 post_owner_name = await extract_post_owner(po_screenshot, ad_id)
                 if post_owner_name:
-                    insert_data["post_owner"] = post_owner_name
                     admob_data_record["post_owner"] = post_owner_name
-                    logger.info("[PostOwner] Added post_owner='%s' to payloads for ad_id=%s", post_owner_name, ad_id)
+                    logger.info("[PostOwner] Added post_owner='%s' to payload for ad_id=%s", post_owner_name, ad_id)
                 else:
-                    logger.info("[PostOwner] No post_owner extracted for ad_id=%s; field omitted", ad_id)
+                    logger.info("[PostOwner] No post_owner extracted for ad_id=%s; field remains empty", ad_id)
             else:
                 logger.info("[PostOwner] No OCR screenshot available for ad_id=%s; skipping", ad_id)
         except Exception as exc:
@@ -620,6 +608,11 @@ class ScrapingManager:
                 logger.error("  Field: %s | Error: %s | Msg: %s", '.'.join(map(str, error['loc'])), error['type'], error['msg'])
             self.storage.upsert_record(admob_data_record)
 
+        # --- Build the FINAL insert_data from the validated canonical payload ---
+        # This is the EXACT payload sent to the API and logged in JSONL.
+        insert_data = dict(admob_data_record)
+        insert_data["crawled_by"] = config.ADMOB_CRAWLED_BY
+
         # --- Validate required fields before sending to API ---
         missing_fields = []
         if not insert_data.get("ad_id"):
@@ -643,6 +636,15 @@ class ScrapingManager:
         # --- STEP 6: POST insert_html_content (Existing DB/API insertion flow) ---
         try:
             result = await admob_api.insert_lander(ad_id, insert_data)
+            # --- JSONL transaction audit log ---
+            try:
+                log_insert_transaction(
+                    ad_data=ad_data,
+                    insert_data=insert_data,
+                    api_response=result,
+                )
+            except Exception as _log_exc:
+                logger.warning("[JSONL Logging] Non-fatal error writing transaction log for ad_id=%s: %s", ad_id, _log_exc)
             api_data = result.get("data", {})
             logger.info(
                 "Pipeline COMPLETE for ad_id=%s — mysql_saved=%s elastic_indexed=%s redirect_status=%s",
@@ -653,6 +655,20 @@ class ScrapingManager:
             )
         except Exception as exc:
             logger.error("Insert failed for ad_id=%s: %s", ad_id, exc)
+            api_resp = getattr(exc, "api_response", None)
+            try:
+                log_insert_transaction(
+                    ad_data=ad_data,
+                    insert_data=insert_data,
+                    api_response=api_resp if api_resp else {
+                        "status": "failed",
+                        "error": True,
+                        "message": f"Insert API failed for ad_id={ad_id}",
+                        "reason": str(exc)
+                    },
+                )
+            except Exception as _log_exc:
+                logger.warning("[JSONL Logging] Non-fatal error writing error transaction log for ad_id=%s: %s", ad_id, _log_exc)
             return False
         finally:
             # --- STEP 7: CLEANUP temp files (ZIP files only; local screenshots are preserved) ---
