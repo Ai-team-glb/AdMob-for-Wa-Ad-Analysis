@@ -331,7 +331,7 @@ async def execute_country_observation(
 
         # Post-owner OCR screenshot (small upper portion only — separate from full-page screenshot)
         post_owner_screenshot_path: Optional[str] = None
-        if ad_id_for_screenshot:
+        if config.POST_OWNER and ad_id_for_screenshot:
             try:
                 po_dir = Path(config.POST_OWNER_SCREENSHOT_DIR)
                 po_dir.mkdir(parents=True, exist_ok=True)

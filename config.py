@@ -61,6 +61,7 @@ HIT_GET_API = _to_bool(_get_yaml_val(_defaults, ["HIT_GET_API"], os.getenv("HIT_
 BRIGHT_PROXIES = _to_bool(_get_yaml_val(_defaults, ["BRIGHT_PROXIES"], os.getenv("BRIGHT_PROXIES", "true")), default=True)
 MAX_ADS_PER_CYCLE = int(_get_yaml_val(_defaults, ["MAX_ADS_PER_CYCLE"], os.getenv("MAX_ADS_PER_CYCLE", 2)))
 HEADLESS = _to_bool(_get_yaml_val(_defaults, ["HEADLESS", "Headless"], os.getenv("HEADLESS", "true")), default=True)
+POST_OWNER = _to_bool(_get_yaml_val(_defaults, ["POST_OWNER", "post_owner"], os.getenv("POST_OWNER", "false")), default=False)
 
 # --- Business rules ------------------------------------------------------------
 MIN_SUCCESSFUL_GEOLOCATIONS = int(os.getenv("MIN_SUCCESSFUL_GEOLOCATIONS", 10))
@@ -94,24 +95,30 @@ LOG_FILE = _resolve("LOG_FILE", BASE_DIR / "logs" / "scraper.log")
 _env_section = "dev" if DEV_MODE else "prod"
 _net_env = _net_admob.get(_env_section, {}) if isinstance(_net_admob.get(_env_section), dict) else {}
 
-DEV_GET_API = str(
+def _clean_endpoint(val) -> str:
+    s = str(val or "").strip()
+    if not s or "endpoint_for" in s.lower() or s.startswith("get_api_") or s.startswith("post_api_"):
+        return ""
+    return s
+
+DEV_GET_API = _clean_endpoint(
     _get_yaml_val(_net_env, ["GET_API", "DEV_GET_API"])
     or _get_yaml_val(_net_admob, ["DEV_GET_API", "GET_API"])
     or os.getenv("DEV_GET_API", "")
-).strip()
+)
 
-DEV_UPLOAD_API = str(
+DEV_UPLOAD_API = _clean_endpoint(
     _get_yaml_val(_net_env, ["UPLOAD_API", "S3_API", "DEV_UPLOAD_API", "DEV_S3_API"])
     or _get_yaml_val(_net_admob, ["DEV_UPLOAD_API", "DEV_S3_API", "UPLOAD_API", "S3_API"])
     or os.getenv("DEV_UPLOAD_API", os.getenv("DEV_S3_API", ""))
-).strip()
+)
 DEV_S3_API = DEV_UPLOAD_API
 
-DEV_INSERT_API = str(
+DEV_INSERT_API = _clean_endpoint(
     _get_yaml_val(_net_env, ["INSERT_API", "DEV_INSERT_API"])
     or _get_yaml_val(_net_admob, ["DEV_INSERT_API", "INSERT_API"])
     or os.getenv("DEV_INSERT_API", "")
-).strip()
+)
 
 ADMOB_API_BASE_URL = os.getenv("ADMOB_API_BASE_URL", "")
 ADMOB_GET_ADS_ENDPOINT = os.getenv("ADMOB_GET_ADS_ENDPOINT", "/api/v1/admob/landers/get_ads_for_blackhat")

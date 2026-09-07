@@ -5,14 +5,15 @@ default_settings:
   HIT_GET_API: false
   BRIGHT_PROXIES: true
   Headless: true
+  POST_OWNER: false
 
 network:
   admob:
     dev:
-      GET_API: get_api_endpoint_for_get_ads
-      S3_API: post_api_endpoint_for_post_screensorts
-      INSERT_API: post_api_endpoint_for_post_payload
+      GET_API: /api/v1/admob/landers/get_ads_for_blackhat
+      S3_API: /api/v1/admob/landers/upload_admob_blackhat
+      INSERT_API: /api/v1/admob/landers/insert_html_content
     prod:
-      GET_API: get_api_endpoint_for_get_ads
-      S3_API: post_api_endpoint_for_post_screensorts
-      INSERT_API: post_api_endpoint_for_post_payload
+      GET_API: /api/v1/admob/landers/get_ads_for_blackhat
+      S3_API: /api/v1/admob/landers/upload_admob_blackhat
+      INSERT_API: /api/v1/admob/landers/insert_html_content
