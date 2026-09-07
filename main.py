@@ -10,6 +10,7 @@ Config-driven automated pipeline:
 import asyncio
 import json
 import os
+import socket
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -167,7 +168,8 @@ async def fetch_and_store_api_ads(storage: Storage) -> List[Dict[str, Any]]:
 
     try:
         timeout = aiohttp.ClientTimeout(total=config.ADMOB_API_TIMEOUT)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
+        connector = aiohttp.TCPConnector(family=socket.AF_INET)
+        async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
             async with session.get(url, headers=admob_api.ADMOB_GET_HEADERS) as resp:
                 status = resp.status
                 body = await resp.text()
@@ -281,6 +283,7 @@ async def main() -> None:
     logger.info("  INSTANCES: %d", config.INSTANCES)
     logger.info("  TIME_GAP_IN_INSTANCES: %.1fs", config.TIME_GAP_IN_INSTANCES)
     logger.info("  MAX_ADS_PER_CYCLE: %d", config.MAX_ADS_PER_CYCLE)
+    logger.info("  POST_OWNER: %s", config.POST_OWNER)
 
     async with BrowserManager() as browser_mgr:
         cycle = 0

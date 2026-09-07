@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import socket
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -28,10 +29,17 @@ def _url(endpoint_or_full_url: str) -> str:
     if endpoint_or_full_url.startswith("http://") or endpoint_or_full_url.startswith("https://"):
         return endpoint_or_full_url
     base = config.ADMOB_API_BASE_URL.rstrip("/")
-    return f"{base}{endpoint_or_full_url}"
+    path = endpoint_or_full_url if endpoint_or_full_url.startswith("/") else f"/{endpoint_or_full_url}"
+    return f"{base}{path}"
 
 
 ADMOB_GET_HEADERS = {"x-scraper-name": "python-lander"}
+
+
+def _create_client_session(timeout: aiohttp.ClientTimeout) -> aiohttp.ClientSession:
+    """Create aiohttp ClientSession forced to IPv4 to avoid broken Windows IPv6 routing timeouts."""
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    return aiohttp.ClientSession(timeout=timeout, connector=connector)
 
 
 # ---------------------------------------------------------------------------
@@ -50,7 +58,7 @@ async def get_ads() -> List[Dict[str, Any]]:
     logger.info("GET ads request started: %s (headers=%s)", url, ADMOB_GET_HEADERS)
 
     timeout = aiohttp.ClientTimeout(total=config.ADMOB_API_TIMEOUT)
-    async with aiohttp.ClientSession(timeout=timeout) as session:
+    async with _create_client_session(timeout) as session:
         async with session.get(url, headers=ADMOB_GET_HEADERS) as resp:
             status = resp.status
             body = await resp.text()
@@ -130,7 +138,7 @@ async def upload_media(
         data.add_field("zip", open(zp, "rb"),
                        filename=zp.name, content_type="application/zip")
 
-    async with aiohttp.ClientSession(timeout=timeout) as session:
+    async with _create_client_session(timeout) as session:
         async with session.post(url, data=data) as resp:
             resp_status = resp.status
             body = await resp.text()
@@ -196,7 +204,7 @@ async def insert_lander(ad_id: str, insert_data: Dict[str, Any]) -> Dict[str, An
     last_exc: Optional[Exception] = None
     for attempt in range(1, config.MAX_RETRIES + 1):
         try:
-            async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with _create_client_session(timeout) as session:
                 async with session.post(url, json=payload) as resp:
                     resp_status = resp.status
                     body = await resp.text()

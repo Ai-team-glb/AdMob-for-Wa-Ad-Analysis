@@ -220,11 +220,12 @@ class ScrapingManager:
             "outgoing_url": [],
             "redirects": [],
             "whatsapp": [],
-            "post_owner": None,
             "campaign_id": str(ad_data.get("campaign_id") or ""),
             "created": created_timestamp,
             "updated": now_iso,
         }
+        if config.POST_OWNER:
+            initial_record["post_owner"] = None
         try:
             self.storage.upsert_record(initial_record)
             logger.info("Updated AdMob_Data.json record for ad_id=%s (status=%d)", ad_id, current_status)
@@ -345,10 +346,11 @@ class ScrapingManager:
                 "redirects": [],
                 "whatsapp": [],
                 "campaign_id": str(ad_data.get("campaign_id") or ""),
-                "post_owner": None,
                 "created": created_timestamp,
                 "updated": updated_iso,
             }
+            if config.POST_OWNER:
+                failed_insert_payload["post_owner"] = None
             try:
                 result = await admob_api.insert_lander(ad_id, failed_insert_payload)
                 logger.info("Reported status=3 unfetchable/404 URL to API for ad_id=%s", ad_id)
@@ -565,32 +567,37 @@ class ScrapingManager:
             "outgoing_url": [],  # always empty — field kept in schema but not populated
             "redirects": redirects,
             "whatsapp": whatsapp_list,
-            "post_owner": None,
             "campaign_id": campaign_id,
             "created": created_timestamp,
             "updated": updated_iso,
         }
+        if config.POST_OWNER:
+            admob_data_record["post_owner"] = None
 
         # --- POST OWNER OCR EXTRACTION (inlined, no separate package import needed) ---
-        try:
-            po_screenshot = best_obs.get("post_owner_screenshot_path")
-            if po_screenshot:
-                post_owner_name = await extract_post_owner(po_screenshot, ad_id)
-                if post_owner_name:
-                    admob_data_record["post_owner"] = post_owner_name
-                    logger.info("[PostOwner] Added post_owner='%s' to payload for ad_id=%s", post_owner_name, ad_id)
+        if config.POST_OWNER:
+            try:
+                po_screenshot = best_obs.get("post_owner_screenshot_path")
+                if po_screenshot:
+                    post_owner_name = await extract_post_owner(po_screenshot, ad_id)
+                    if post_owner_name:
+                        admob_data_record["post_owner"] = post_owner_name
+                        logger.info("[PostOwner] Added post_owner='%s' to payload for ad_id=%s", post_owner_name, ad_id)
+                    else:
+                        logger.info("[PostOwner] No post_owner extracted for ad_id=%s; field remains empty", ad_id)
                 else:
-                    logger.info("[PostOwner] No post_owner extracted for ad_id=%s; field remains empty", ad_id)
-            else:
-                logger.info("[PostOwner] No OCR screenshot available for ad_id=%s; skipping", ad_id)
-        except Exception as exc:
-            logger.warning("[PostOwner] OCR sub-flow failed for ad_id=%s (non-fatal): %s", ad_id, exc)
+                    logger.info("[PostOwner] No OCR screenshot available for ad_id=%s; skipping", ad_id)
+            except Exception as exc:
+                logger.warning("[PostOwner] OCR sub-flow failed for ad_id=%s (non-fatal): %s", ad_id, exc)
 
         # --- Pydantic Validation & Local Persistence in data/AdMob_Data.json ---
         try:
             validated_model = AdMobDataRecord.model_validate(admob_data_record)
             logger.info("Pydantic validation PASSED for ad_id=%s", ad_id)
             validated_payload = validated_model.model_dump()
+            if not config.POST_OWNER:
+                validated_payload.pop("post_owner", None)
+                admob_data_record.pop("post_owner", None)
 
             # Save single validated payload to data/validated_payload.json
             try:
@@ -612,6 +619,8 @@ class ScrapingManager:
         # This is the EXACT payload sent to the API and logged in JSONL.
         insert_data = dict(admob_data_record)
         insert_data["crawled_by"] = config.ADMOB_CRAWLED_BY
+        if not config.POST_OWNER:
+            insert_data.pop("post_owner", None)
 
         # --- Validate required fields before sending to API ---
         missing_fields = []
